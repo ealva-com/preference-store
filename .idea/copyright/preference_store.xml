@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="Copyright (c) &amp;#36;today.year  Eric A. Snell&#10;&#10;This file is part of PreferenceStore&#10;                            &#10;PreferenceStore is free software: you can redistribute it and/or modify it under the terms of&#10;the GNU Lesser General Public License as published by the Free Software Foundation, either&#10;version 3 of the License, or (at your option) any later version.&#10;                            &#10;PreferenceStore is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;&#10;without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.&#10;See the GNU Lesser General Public License for more details.&#10;                            &#10;You should have received a copy of the GNU Lesser General Public License along with&#10;PreferenceStore. If not, see &lt;http://www.gnu.org/licenses/&gt;." />
+    <option name="myName" value="preference-store" />
+  </copyright>
+</component>
