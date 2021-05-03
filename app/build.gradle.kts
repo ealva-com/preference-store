@@ -65,17 +65,21 @@ android {
 }
 
 dependencies {
-  implementation("androidx.appcompat:appcompat:1.2.0")
-    coreLibraryDesugaring(ToolsLib.DESUGARING)
-  implementation(project(":preference-store"))
+  coreLibraryDesugaring(ToolsLib.DESUGARING)
   implementation(kotlin("stdlib-jdk8"))
-
+  implementation(project(":preference-store"))
   implementation(SupportLibs.ANDROIDX_APPCOMPAT)
-  implementation(SupportLibs.ANDROIDX_CONSTRAINT_LAYOUT)
   implementation(SupportLibs.ANDROIDX_CORE_KTX)
+  implementation(SupportLibs.ANDROIDX_DATASTORE_PREFERENCES)
   implementation(SupportLibs.ANDROIDX_LIFECYCLE_RUNTIME_KTX)
+  implementation(ThirdParty.EALVALOG)
+  implementation(ThirdParty.EALVALOG_ANDROID)
+  implementation(ThirdParty.EALVALOG_CORE)
+  implementation(ThirdParty.COROUTINE_CORE)
+  implementation(ThirdParty.COROUTINE_ANDROID)
 
-  implementation(ThirdParty.KOTLIN_RESULT)
+  implementation(ThirdParty.KOIN)
+  implementation(ThirdParty.KOIN_ANDROID)
 
   implementation("androidx.viewpager2:viewpager2:1.0.0")
   implementation("androidx.activity:activity-ktx:1.2.2")
@@ -89,10 +93,6 @@ dependencies {
   implementation("com.google.android.material:material:1.3.0")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
-
-  implementation(ThirdParty.EALVALOG)
-  implementation(ThirdParty.EALVALOG_CORE)
-  implementation(ThirdParty.EALVALOG_ANDROID)
 
   testImplementation(TestingLib.JUNIT)
   testImplementation(AndroidTestingLib.ANDROIDX_TEST_CORE) {

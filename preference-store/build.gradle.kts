@@ -37,9 +37,6 @@ android {
     consumerProguardFiles("consumer-rules.pro")
   }
 
-  kotlinOptions {
-    jvmTarget = "11"
-  }
   compileOptions {
     isCoreLibraryDesugaringEnabled = true
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -71,6 +68,15 @@ android {
     unitTests.isIncludeAndroidResources = true
   }
 
+  packagingOptions {
+    resources {
+      excludes += listOf(
+        "META-INF/AL2.0",
+        "META-INF/LGPL2.1"
+      )
+    }
+  }
+
   kotlinOptions {
     jvmTarget = "1.8"
     languageVersion = "1.5"
@@ -91,6 +97,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
   implementation(SupportLibs.ANDROIDX_APPCOMPAT)
   implementation(SupportLibs.ANDROIDX_CORE_KTX)
+  implementation(SupportLibs.ANDROIDX_DATASTORE_PREFERENCES)
   implementation(ThirdParty.EALVALOG)
   implementation(ThirdParty.EALVALOG_CORE)
   implementation(ThirdParty.COROUTINE_CORE)

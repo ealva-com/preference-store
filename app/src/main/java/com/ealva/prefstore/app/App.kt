@@ -22,12 +22,26 @@ import com.ealva.ealvalog.Loggers
 import com.ealva.ealvalog.android.AndroidLogger
 import com.ealva.ealvalog.android.AndroidLoggerFactory
 import com.ealva.ealvalog.android.DebugLogHandler
+import com.ealva.prefstore.prefs.PrefsModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 @Suppress("unused") // It's in the manifest
 class App : Application() {
   override fun onCreate() {
     super.onCreate()
     setupLogging()
+
+    startKoin {
+      androidLogger(level = Level.INFO)
+      androidContext(androidContext = this@App)
+
+      modules(
+        PrefsModule.koinModule,
+      )
+    }
   }
 
   private fun setupLogging() {
