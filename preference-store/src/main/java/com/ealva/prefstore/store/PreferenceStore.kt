@@ -43,7 +43,7 @@ public interface MutablePreferenceStore {
 }
 
 /**
- * PreferenceStore wraps a DataStore<Preference> providing a higher level of abstraction of a
+ * PreferenceStore wraps a DataStore<Preference> and provides a higher level abstraction of a
  * [Preference], getting and setting values, flows of values for a [Preference], and mapping of
  * types used by a client and the type stored in the [DataStore].
  *
@@ -125,6 +125,105 @@ public suspend inline operator fun <S : Any, A : Any> StorePref<S, A>.invoke(val
   set(value)
 
 /**
+ * It is expected that clients will implement this class and provide val members, constructed with
+ * one of the various protected typePreference functions. If more sophisticated types are
+ * required, the [makePreference] function can be called to build the proper Preference
+ * implementation.
+ */
+public open class BasePreferenceStore<T : PreferenceStore<T>>(
+  private val dataStore: DataStore<Preferences>,
+  private var lastPreferences: Preferences
+) : PreferenceStore<T> {
+  private val prefSet = mutableSetOf<StorePref<*, *>>()
+
+  internal val data: Flow<Preferences>
+    get() = dataStore.data
+
+  internal fun <S : Any, A : Any> getPreferenceValue(pref: StorePref<S, A>): A =
+    pref.storedToActual(lastPreferences[pref.key])
+
+  override suspend fun edit(block: T.(MutablePreferenceStore) -> Unit) {
+    lastPreferences = dataStore.edit { mutablePreferences ->
+      @Suppress("UNCHECKED_CAST") (this as T).block(MutableStore(prefSet, mutablePreferences))
+    }
+  }
+
+  override suspend fun resetToDefaultExcept(predicate: (StorePref<*, *>) -> Boolean) {
+    lastPreferences = dataStore.edit { mutablePreferences ->
+      prefSet
+        .filterNot(predicate)
+        .forEach { storePref -> storePref.storeDefault(mutablePreferences) }
+    }
+  }
+
+  final override fun asMap(): Map<Preferences.Key<*>, Any> = lastPreferences.asMap()
+
+  protected fun <S : Any, A : Any> register(pref: StorePref<S, A>): StorePref<S, A> =
+    pref.apply { require(prefSet.add(pref)) { "Already contains key ${pref.key}" } }
+
+  protected fun intPreference(
+    name: String,
+    default: Int,
+    sanitize: Sanitize<Int> = null
+  ): UnmappedPref<Int> = makePreference(name, default, sanitize)
+
+  protected fun stringPreference(
+    name: String,
+    default: String,
+    sanitize: Sanitize<String> = null
+  ): UnmappedPref<String> = makePreference(name, default, sanitize)
+
+  protected fun boolPreference(
+    name: String,
+    default: Boolean,
+    sanitize: Sanitize<Boolean> = null
+  ): UnmappedPref<Boolean> =
+    makePreference(name, default, sanitize)
+
+  protected fun floatPreference(
+    name: String,
+    default: Float,
+    sanitize: Sanitize<Float> = null
+  ): UnmappedPref<Float> = makePreference(name, default, sanitize)
+
+  protected fun longPreference(
+    name: String,
+    default: Long,
+    sanitize: Sanitize<Long> = null
+  ): UnmappedPref<Long> = makePreference(name, default, sanitize)
+
+  protected fun doublePreference(
+    name: String,
+    default: Double,
+    sanitize: Sanitize<Double> = null
+  ): UnmappedPref<Double> = makePreference(name, default, sanitize)
+
+  protected fun <T : Enum<T>> enumByNamePreference(name: String, default: T): StorePref<String, T> =
+    makePreference(name, default, { default.javaClass.reifyEnum(it, default) }, { it.name }, null)
+
+  private inline fun <reified T : Any> makePreference(
+    name: String,
+    default: T,
+    noinline sanitize: Sanitize<T>
+  ): UnmappedPref<T> = register(Unmapped(prefKey(name), default, sanitize, this))
+
+  protected inline fun <reified S : Any, A : Any> makePreference(
+    name: String,
+    default: A,
+    crossinline maker: (S) -> A,
+    crossinline serialize: (A) -> S,
+    noinline sanitize: Sanitize<A> = null
+  ): StorePref<S, A> = register(
+    object : BasePreference<S, A>(prefKey(name), default, sanitize, this) {
+      override fun doStoredToActual(stored: S): A = maker(stored)
+      override fun doActualToStored(actual: A): S = serialize(actual)
+    }
+  )
+
+  override fun toString(): String = lastPreferences.toString()
+}
+
+/**
  * BasePreference provides necessary functionality for [PreferenceStore.Preference] implementation
  * except for mapping from stored value to actual and vice versa.
  *
@@ -137,7 +236,7 @@ public abstract class BasePreference<S : Any, A : Any>(
   override val sanitize: Sanitize<A>,
   private val store: BasePreferenceStore<*>
 ) : StorePref<S, A> {
-  override fun invoke(): A = store.latest(this)
+  override fun invoke(): A = store.getPreferenceValue(this)
 
   override suspend fun set(value: A) {
     store.edit { it[this@BasePreference] = value }
@@ -187,106 +286,6 @@ private class Unmapped<T : Any>(
 ) : BasePreference<T, T>(key, defaultValue, sanitize, store) {
   override fun doStoredToActual(stored: T): T = stored
   override fun doActualToStored(actual: T): T = actual
-}
-
-/**
- * It is expected that clients will implement this class and provide val members, constructed with
- * one of the various protected typePreference functions. If more sophisticated types are
- * required, the [makePreference] function can be called to build the proper Preference
- * implementation.
- */
-public open class BasePreferenceStore<T : PreferenceStore<T>>(
-  private val dataStore: DataStore<Preferences>,
-  private var lastPreferences: Preferences
-) : PreferenceStore<T> {
-  private val prefSet = mutableSetOf<StorePref<*, *>>()
-
-  public val data: Flow<Preferences>
-    get() = dataStore.data
-
-  public fun <S : Any, A : Any> latest(pref: StorePref<S, A>): A {
-    return pref.storedToActual(lastPreferences[pref.key])
-  }
-
-  override suspend fun edit(block: T.(MutablePreferenceStore) -> Unit) {
-    lastPreferences = dataStore.edit { mutablePreferences ->
-      @Suppress("UNCHECKED_CAST") (this as T).block(MutableStore(prefSet, mutablePreferences))
-    }
-  }
-
-  override suspend fun resetToDefaultExcept(predicate: (StorePref<*, *>) -> Boolean) {
-    lastPreferences = dataStore.edit { mutablePreferences ->
-      prefSet
-        .filterNot(predicate)
-        .forEach { storePref -> storePref.storeDefault(mutablePreferences) }
-    }
-  }
-
-  final override fun asMap(): Map<Preferences.Key<*>, Any> = lastPreferences.asMap()
-
-  private inline fun <reified T : Any> makePreference(
-    name: String,
-    default: T,
-    noinline sanitize: Sanitize<T>
-  ): UnmappedPref<T> = register(Unmapped(prefKey(name), default, sanitize, this))
-
-  protected fun <S : Any, A : Any> register(pref: StorePref<S, A>): StorePref<S, A> =
-    pref.apply { require(prefSet.add(pref)) { "Already contains key ${pref.key}" } }
-
-  protected fun intPreference(
-    name: String,
-    default: Int,
-    sanitize: Sanitize<Int> = null
-  ): UnmappedPref<Int> = makePreference(name, default, sanitize)
-
-  protected fun stringPreference(
-    name: String,
-    default: String,
-    sanitize: Sanitize<String> = null
-  ): UnmappedPref<String> = makePreference(name, default, sanitize)
-
-  protected fun boolPreference(
-    name: String,
-    default: Boolean,
-    sanitize: Sanitize<Boolean> = null
-  ): UnmappedPref<Boolean> =
-    makePreference(name, default, sanitize)
-
-  protected fun floatPreference(
-    name: String,
-    default: Float,
-    sanitize: Sanitize<Float> = null
-  ): UnmappedPref<Float> = makePreference(name, default, sanitize)
-
-  protected fun longPreference(
-    name: String,
-    default: Long,
-    sanitize: Sanitize<Long> = null
-  ): UnmappedPref<Long> = makePreference(name, default, sanitize)
-
-  protected fun doublePreference(
-    name: String,
-    default: Double,
-    sanitize: Sanitize<Double> = null
-  ): UnmappedPref<Double> = makePreference(name, default, sanitize)
-
-  protected fun <T : Enum<T>> enumByNamePreference(name: String, default: T): StorePref<String, T> =
-    makePreference(name, default, { default.javaClass.reifyEnum(it, default) }, { it.name }, null)
-
-  protected inline fun <reified S : Any, A : Any> makePreference(
-    name: String,
-    default: A,
-    crossinline maker: (S) -> A,
-    crossinline serialize: (A) -> S,
-    noinline sanitize: Sanitize<A> = null
-  ): StorePref<S, A> = register(
-    object : BasePreference<S, A>(prefKey(name), default, sanitize, this) {
-      override fun doStoredToActual(stored: S): A = maker(stored)
-      override fun doActualToStored(actual: A): S = serialize(actual)
-    }
-  )
-
-  override fun toString(): String = lastPreferences.toString()
 }
 
 private class MutableStore(

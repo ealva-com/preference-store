@@ -62,7 +62,7 @@ private suspend fun setSomePrefs(simplePrefs: SimplePrefs) {
   }
 }
 ```
-And example of creating the Singleton inside a Koin module:
+An example of creating the Singleton inside a Koin module:
 ```kotlin
 single(named("SimplePrefs")) {
   SimplePrefsSingleton(
@@ -185,11 +185,8 @@ A preference can be created for any type which can be converted to a supported p
 Ensure you are using the latest [published version][maven-preference-store] or the latest
 [SNAPSHOT][preference-store-snapshot] if you want a bleeding-edge version.
 ## Pull/Change Requests
-Suggestions and Pull Requests welcome. Currently only 1 branch, so better to let me know if you are
-going to make a pull request to reduce potential conflict. If activity picks-up I'll create a
-development branch, but for now just branch off of main.
-
-Also, if you have a questions or a change you propose I make then open an issue for discussion.
+Suggestions and Pull Requests welcome. Also, if you have a question, or a proposed change, open an
+issue for discussion.
 ## Future
 I have plans on adding a library which has [Compose][compose] functions for preference UI.
 
