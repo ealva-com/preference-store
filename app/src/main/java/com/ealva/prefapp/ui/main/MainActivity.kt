@@ -15,18 +15,18 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ealva.prefstore.ui.main
+package com.ealva.prefapp.ui.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.ealva.prefstore.prefs.AnEnum
-import com.ealva.prefstore.prefs.AppPrefsSingleton
-import com.ealva.prefstore.prefs.DuckAction
-import com.ealva.prefstore.prefs.Millis
-import com.ealva.prefstore.prefs.SimplePrefs
-import com.ealva.prefstore.prefs.SimplePrefsSingleton
-import com.ealva.prefstore.prefs.Volume
+import com.ealva.prefapp.prefs.AnEnum
+import com.ealva.prefapp.prefs.AppPrefsSingleton
+import com.ealva.prefapp.prefs.DuckAction
+import com.ealva.prefapp.prefs.Millis
+import com.ealva.prefapp.prefs.SimplePrefs
+import com.ealva.prefapp.prefs.SimplePrefsSingleton
+import com.ealva.prefapp.prefs.Volume
 import com.ealva.prefstore.store.invoke
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -38,6 +38,7 @@ import org.koin.core.qualifier.named
 /**
  * Code here is a verbose for illustration
  */
+@Suppress("MagicNumber")
 class MainActivity : AppCompatActivity() {
   private val simplePrefsSingleton: SimplePrefsSingleton by inject(qualifier = named("SimplePrefs"))
   private val prefsSingleton: AppPrefsSingleton by inject(qualifier = named("AppPrefs"))
@@ -47,49 +48,50 @@ class MainActivity : AppCompatActivity() {
     // Must be inside a coroutine to make changes to preferences
     lifecycleScope.launch {
       // Singleton has an invoke function we can use to access the instance
-      prefsSingleton { appPrefs ->
-        appPrefs.firstRun(false)  // set individual preference
+      prefsSingleton {
+        firstRun(false)  // set individual preference
 
         // If setting more than one pref, use edit to commit all changes as a block
-        appPrefs.edit {
+        edit {
           it[duckAction] = DuckAction.Duck
           it[duckVolume] = Volume(30)
           it[lastScanTime] = Millis(System.currentTimeMillis())
         }
       }
 
-      simplePrefsSingleton { simplePrefs ->
-        setSomePrefs(simplePrefs)
-        startChangingInt(simplePrefs)
-        watchSimplePrefsInt(simplePrefs)
+      simplePrefsSingleton {
+        this.setSomePrefs()
+        this.startChangingInt()
+        this.watchSimplePrefsInt()
       }
     }
   }
 
-  private suspend fun setSomePrefs(simplePrefs: SimplePrefs) {
-    simplePrefs.anEnum(AnEnum.First) // commits the single preference anEnum
+  private suspend fun SimplePrefs.setSomePrefs() {
+    anEnum(AnEnum.First) // commits the single preference anEnum
+    someBool(false)
     // commit preferences as a single unit
-    simplePrefs.edit {
-      it[someBool] = false
+    edit {
+      it[someBool] = true
       it[someInt] = 100
       it[anEnum] = AnEnum.Another
     }
-    require(simplePrefs.anEnum() == AnEnum.Another)
-    require(!simplePrefs.someBool())
+    require(anEnum() == AnEnum.Another) // invoke the preference to get it's value
+    require(someBool())
   }
 
-  private fun startChangingInt(simplePrefs: SimplePrefs) {
+  private fun SimplePrefs.startChangingInt() {
     lifecycleScope.launch {
       while (isActive) {
         delay(2000)
-        simplePrefs.someInt(simplePrefs.someInt() + 10)
+        someInt(someInt() + 10)
       }
     }
   }
 
-  private suspend fun watchSimplePrefsInt(simplePrefs: SimplePrefs) {
-    simplePrefs.someInt.asFlow().collect {
-      println("SimplePrefs.someInt changed: ${simplePrefs.someInt()}")
+  private suspend fun SimplePrefs.watchSimplePrefsInt() {
+    someInt.asFlow().collect {
+      println("SimplePrefs.someInt changed: $it")
     }
   }
 }

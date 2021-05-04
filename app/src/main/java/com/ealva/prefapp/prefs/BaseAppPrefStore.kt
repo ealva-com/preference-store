@@ -15,15 +15,13 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ealva.prefstore.prefs
+package com.ealva.prefapp.prefs
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.ealva.prefstore.store.BasePreferenceStore
 import com.ealva.prefstore.store.PreferenceStore
 import com.ealva.prefstore.store.StorePref
-import com.ealva.prefstore.store.UnmappedPref
-import kotlinx.coroutines.flow.StateFlow
 
 @JvmInline
 value class Millis(val value: Long) : Comparable<Millis> {
@@ -51,7 +49,7 @@ value class Volume(val value: Int) : Comparable<Volume> {
 
 typealias VolumeRange = ClosedRange<Volume>
 
-enum class DuckAction  {
+enum class DuckAction {
   Duck,
   Pause,
   DoNothing;
@@ -63,8 +61,8 @@ typealias VolumeStorePref = StorePref<Int, Volume>
 @Suppress("SameParameterValue")
 open class BaseAppPrefStore<T : PreferenceStore<T>>(
   dataStore: DataStore<Preferences>,
-  stateFlow: StateFlow<Preferences>
-) : BasePreferenceStore<T>(dataStore, stateFlow) {
+  preferences: Preferences
+) : BasePreferenceStore<T>(dataStore, preferences) {
   protected fun millisPref(
     name: String,
     default: Millis,

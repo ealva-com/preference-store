@@ -72,9 +72,6 @@ dependencies {
   implementation(SupportLibs.ANDROIDX_CORE_KTX)
   implementation(SupportLibs.ANDROIDX_DATASTORE_PREFERENCES)
   implementation(SupportLibs.ANDROIDX_LIFECYCLE_RUNTIME_KTX)
-  implementation(ThirdParty.EALVALOG)
-  implementation(ThirdParty.EALVALOG_ANDROID)
-  implementation(ThirdParty.EALVALOG_CORE)
   implementation(ThirdParty.COROUTINE_CORE)
   implementation(ThirdParty.COROUTINE_ANDROID)
 

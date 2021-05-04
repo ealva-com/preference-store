@@ -25,14 +25,14 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 
-public typealias PreferenceStoreMaker<T> = (DataStore<Preferences>, StateFlow<Preferences>) -> T
+public typealias PreferenceStoreMaker<T> = (DataStore<Preferences>, Preferences) -> T
 
 public interface PreferenceStoreSingleton<T : PreferenceStore<T>> {
   public suspend fun instance(): T
@@ -57,8 +57,8 @@ public interface PreferenceStoreSingleton<T : PreferenceStore<T>> {
 }
 
 public suspend inline operator fun <T : PreferenceStore<T>, R> PreferenceStoreSingleton<T>.invoke(
-  block: (T) -> R
-): R = block(instance())
+  block: T.() -> R
+): R = instance().block()
 
 private class PreferenceStoreSingletonImpl<T : PreferenceStore<T>>(
   private val storeMaker: PreferenceStoreMaker<T>,
@@ -82,5 +82,5 @@ private suspend fun <T : PreferenceStore<T>> make(
   scope: CoroutineScope
 ): T {
   val dataStore = PreferenceDataStoreFactory.create(scope = scope) { file }
-  return storeMaker(dataStore, dataStore.data.stateIn(scope))
+  return storeMaker(dataStore, dataStore.data.take(1).first())
 }

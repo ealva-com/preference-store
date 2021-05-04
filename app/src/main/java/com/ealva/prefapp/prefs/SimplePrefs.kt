@@ -15,7 +15,7 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ealva.prefstore.prefs
+package com.ealva.prefapp.prefs
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -24,7 +24,6 @@ import com.ealva.prefstore.store.PreferenceStore
 import com.ealva.prefstore.store.PreferenceStoreSingleton
 import com.ealva.prefstore.store.StorePref
 import com.ealva.prefstore.store.UnmappedPref
-import kotlinx.coroutines.flow.StateFlow
 
 enum class AnEnum {
   First,
@@ -38,16 +37,18 @@ interface SimplePrefs : PreferenceStore<SimplePrefs> {
   val someBool: UnmappedPref<Boolean>
   val someInt: UnmappedPref<Int>
   val anEnum: StorePref<String, AnEnum>
+
   companion object {
-    fun make(dataStore: DataStore<Preferences>, stateFlow: StateFlow<Preferences>): SimplePrefs =
-      SimplePrefsImpl(dataStore, stateFlow)
+    fun make(dataStore: DataStore<Preferences>, preferences: Preferences): SimplePrefs =
+      SimplePrefsImpl(dataStore, preferences)
   }
 }
 
+@Suppress("MagicNumber")
 private class SimplePrefsImpl(
   dataStore: DataStore<Preferences>,
-  stateFlow: StateFlow<Preferences>
-) : BasePreferenceStore<SimplePrefs>(dataStore, stateFlow), SimplePrefs {
+  preferences: Preferences
+) : BasePreferenceStore<SimplePrefs>(dataStore, preferences), SimplePrefs {
   override val someBool = boolPreference("some_bool", false)
   override val someInt = intPreference("some_int", 100)
   override val anEnum = enumByNamePreference("an_enum", AnEnum.First)

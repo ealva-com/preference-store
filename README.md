@@ -4,6 +4,9 @@ Wrapper around DataStore<Preferences> providing a higher level abstraction and a
 functionality.
 
 # Usage
+Note: This library currently uses Kotlin 1.5 language features and alpha/beta versions of some tools
+and libraries.
+
 ## Creating a PreferenceStore
 A simple example to show the basics - SimplePrefs.kt:
 ```kotlin
@@ -19,16 +22,17 @@ interface SimplePrefs : PreferenceStore<SimplePrefs> {
   val someBool: UnmappedPref<Boolean>
   val someInt: UnmappedPref<Int>
   val anEnum: StorePref<String, AnEnum>
+
   companion object {
-    fun make(dataStore: DataStore<Preferences>, stateFlow: StateFlow<Preferences>): SimplePrefs =
-      SimplePrefsImpl(dataStore, stateFlow)
+    fun make(dataStore: DataStore<Preferences>, preferences: Preferences): SimplePrefs =
+      SimplePrefsImpl(dataStore, preferences)
   }
 }
 
 private class SimplePrefsImpl(
   dataStore: DataStore<Preferences>,
-  stateFlow: StateFlow<Preferences>
-) : BasePreferenceStore<SimplePrefs>(dataStore, stateFlow), SimplePrefs {
+  preferences: Preferences
+) : BasePreferenceStore<SimplePrefs>(dataStore, preferences), SimplePrefs {
   override val someBool = boolPreference("some_bool", false)
   override val someInt = intPreference("some_int", 100)
   override val anEnum = enumByNamePreference("an_enum", AnEnum.First)
@@ -56,9 +60,6 @@ private suspend fun setSomePrefs(simplePrefs: SimplePrefs) {
     it[someInt] = 100
     it[anEnum] = AnEnum.Another
   }
-  // Setting a preference value is a suspending function, reading is not
-  require(simplePrefs.anEnum() == AnEnum.Another) // invoke the preference to get it's value 
-  require(!simplePrefs.someBool())
 }
 ```
 And example of creating the Singleton inside a Koin module:
@@ -90,7 +91,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
   }
 }
 ```
-Each preference provides a Flow of it's values. As the preference value is committed a new value
+Each preference provides a Flow of its values. As the preference value is committed the value
 is emitted from the flow.
 ```kotlin
 private suspend fun watchSimplePrefsInt(simplePrefs: SimplePrefs) {
@@ -135,8 +136,8 @@ typealias VolumeStorePref = StorePref<Int, Volume>
 
 open class BaseAppPrefStore<T : PreferenceStore<T>>(
   dataStore: DataStore<Preferences>,
-  stateFlow: StateFlow<Preferences>
-) : BasePreferenceStore<T>(dataStore, stateFlow) {
+  preferences: Preferences
+) : BasePreferenceStore<T>(dataStore, preferences) {
   protected fun millisPref(
     name: String,
     default: Millis,
@@ -161,8 +162,8 @@ val DUCK_VOLUME_RANGE: VolumeRange = Volume.OFF..Volume.FULL
 
 private class AppPrefsImpl(
   dataStore: DataStore<Preferences>,
-  stateFlow: StateFlow<Preferences>
-) : BaseAppPrefStore<AppPrefs>(dataStore, stateFlow), AppPrefs {
+  preferences: Preferences
+) : BaseAppPrefStore<AppPrefs>(dataStore, preferences), AppPrefs {
 
   override val firstRun = boolPreference("first_run", true)
   override val lastScanTime = millisPref("last_scan_time", Millis.ZERO)
@@ -178,3 +179,20 @@ private class AppPrefsImpl(
 }
 ```
 A preference can be created for any type which can be converted to a supported primitive or String.
+
+# Using and Contributing
+## Latest Version
+Ensure you are using the latest [published version][maven-preference-store] or the latest
+[SNAPSHOT][preference-store-snapshot] if you want a bleeding-edge version.
+## Pull/Change Requests
+Suggestions and Pull Requests welcome. Currently only 1 branch, so better to let me know if you are
+going to make a pull request to reduce potential conflict. If activity picks-up I'll create a
+development branch, but for now just branch off of main.
+
+Also, if you have a questions or a change you propose I make then open an issue for discussion.
+## Future
+I have plans on adding a library which has [Compose][compose] functions for preference UI.
+
+[maven-preference-store]: https://search.maven.org/search?q=g:com.ealva%20AND%20a:preference-store
+[preference-store-snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/ealva/preference-store/
+[compose]: https://developer.android.com/jetpack/compose]

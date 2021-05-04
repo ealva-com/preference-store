@@ -15,16 +15,15 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ealva.prefstore.prefs
+package com.ealva.prefapp.prefs
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.ealva.prefstore.prefs.AppPrefs.Companion.DUCK_VOLUME_RANGE
+import com.ealva.prefapp.prefs.AppPrefs.Companion.DUCK_VOLUME_RANGE
 import com.ealva.prefstore.store.PreferenceStore
 import com.ealva.prefstore.store.PreferenceStoreSingleton
 import com.ealva.prefstore.store.StorePref
 import com.ealva.prefstore.store.UnmappedPref
-import kotlinx.coroutines.flow.StateFlow
 
 /** To build:
  * ```AppPrefsSingleton(AppPrefs.Companion::make, androidContext(), fileName)```
@@ -42,11 +41,11 @@ interface AppPrefs : PreferenceStore<AppPrefs> {
   val duckVolume: StorePref<Int, Volume> // Stores Int, provides value class Volume
 
   companion object {
-    /** Construct the AppPrefs implementation */
-    fun make(dataStore: DataStore<Preferences>, stateFlow: StateFlow<Preferences>): AppPrefs =
-      AppPrefsImpl(dataStore, stateFlow)
-
     val DUCK_VOLUME_RANGE: VolumeRange = Volume.OFF..Volume.FULL
+
+    /** Construct the AppPrefs implementation */
+    fun make(dataStore: DataStore<Preferences>, preferences: Preferences): AppPrefs =
+      AppPrefsImpl(dataStore, preferences)
   }
 }
 
@@ -58,8 +57,8 @@ interface AppPrefs : PreferenceStore<AppPrefs> {
  */
 private class AppPrefsImpl(
   dataStore: DataStore<Preferences>,
-  stateFlow: StateFlow<Preferences>
-) : BaseAppPrefStore<AppPrefs>(dataStore, stateFlow), AppPrefs {
+  preferences: Preferences
+) : BaseAppPrefStore<AppPrefs>(dataStore, preferences), AppPrefs {
 
   override val firstRun = boolPreference("first_run", true)
   override val lastScanTime = millisPref("last_scan_time", Millis.ZERO)

@@ -15,14 +15,14 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ealva.prefstore.app
+package com.ealva.prefapp.app
 
 import android.app.Application
-import com.ealva.ealvalog.Loggers
-import com.ealva.ealvalog.android.AndroidLogger
-import com.ealva.ealvalog.android.AndroidLoggerFactory
-import com.ealva.ealvalog.android.DebugLogHandler
-import com.ealva.prefstore.prefs.PrefsModule
+//import com.ealva.ealvalog.Loggers
+//import com.ealva.ealvalog.android.AndroidLogger
+//import com.ealva.ealvalog.android.AndroidLoggerFactory
+//import com.ealva.ealvalog.android.DebugLogHandler
+import com.ealva.prefapp.prefs.PrefsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -32,7 +32,7 @@ import org.koin.core.logger.Level
 class App : Application() {
   override fun onCreate() {
     super.onCreate()
-    setupLogging()
+//    setupLogging()
 
     startKoin {
       androidLogger(level = Level.INFO)
@@ -44,8 +44,8 @@ class App : Application() {
     }
   }
 
-  private fun setupLogging() {
-    AndroidLogger.setHandler(DebugLogHandler())
-    Loggers.setFactory(AndroidLoggerFactory)
-  }
+//  private fun setupLogging() {
+//    AndroidLogger.setHandler(DebugLogHandler())
+//    Loggers.setFactory(AndroidLoggerFactory)
+//  }
 }

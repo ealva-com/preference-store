@@ -98,8 +98,6 @@ dependencies {
   implementation(SupportLibs.ANDROIDX_APPCOMPAT)
   implementation(SupportLibs.ANDROIDX_CORE_KTX)
   implementation(SupportLibs.ANDROIDX_DATASTORE_PREFERENCES)
-  implementation(ThirdParty.EALVALOG)
-  implementation(ThirdParty.EALVALOG_CORE)
   implementation(ThirdParty.COROUTINE_CORE)
   implementation(ThirdParty.COROUTINE_ANDROID)
 

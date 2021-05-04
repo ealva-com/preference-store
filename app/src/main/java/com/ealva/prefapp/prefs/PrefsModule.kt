@@ -15,7 +15,7 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ealva.prefstore.prefs
+package com.ealva.prefapp.prefs
 
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named

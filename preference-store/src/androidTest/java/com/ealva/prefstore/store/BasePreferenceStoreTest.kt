@@ -24,7 +24,6 @@ import com.ealva.prefstore.test.shared.CoroutineRule
 import com.nhaarman.expect.expect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -36,6 +35,7 @@ import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import java.io.File
+import kotlin.random.Random
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
@@ -68,16 +68,16 @@ public class BasePreferenceStoreTest {
 
   @Test
   public fun testPrefStoreString(): Unit = coroutineRule.runBlockingTest {
-    singleton { prefs ->
-      prefs.edit { it[stringPref] = "first" }
-      expect(prefs.stringPref()).toBe("first")
-      prefs.stringPref.set("second")
-      expect(prefs.stringPref()).toBe("second")
-      prefs.stringPref.asFlow().take(1).toList().let { list ->
+    singleton {
+      edit { it[stringPref] = "first" }
+      expect(stringPref()).toBe("first")
+      stringPref.set("second")
+      expect(stringPref()).toBe("second")
+      stringPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe("second")
       }
-      prefs.stringPref.set("third")
-      prefs.stringPref.asFlow().take(1).toList().let { list ->
+      stringPref.set("third")
+      stringPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe("third")
       }
     }
@@ -85,16 +85,16 @@ public class BasePreferenceStoreTest {
 
   @Test
   public fun testPrefStoreInt(): Unit = coroutineRule.runBlockingTest {
-    singleton { prefs ->
-      prefs.edit { it[intPref] = 100 }
-      expect(prefs.intPref()).toBe(100)
-      prefs.intPref.set(-100)
-      expect(prefs.intPref()).toBe(-100)
-      prefs.intPref.asFlow().take(1).toList().let { list ->
+    singleton {
+      edit { it[intPref] = 100 }
+      expect(intPref()).toBe(100)
+      intPref.set(-100)
+      expect(intPref()).toBe(-100)
+      intPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(-100)
       }
-      prefs.intPref.set(1000)
-      prefs.intPref.asFlow().take(1).toList().let { list ->
+      intPref.set(1000)
+      intPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(1000)
       }
     }
@@ -102,16 +102,16 @@ public class BasePreferenceStoreTest {
 
   @Test
   public fun testPrefStoreBoolean(): Unit = coroutineRule.runBlockingTest {
-    singleton { prefs ->
-      prefs.edit { it[boolPref] = false }
-      expect(prefs.boolPref()).toBe(false)
-      prefs.boolPref.set(true)
-      expect(prefs.boolPref()).toBe(true)
-      prefs.boolPref.asFlow().take(1).toList().let { list ->
+    singleton {
+      edit { it[boolPref] = false }
+      expect(boolPref()).toBe(false)
+      boolPref.set(true)
+      expect(boolPref()).toBe(true)
+      boolPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(true)
       }
-      prefs.boolPref.set(false)
-      prefs.boolPref.asFlow().take(1).toList().let { list ->
+      boolPref.set(false)
+      boolPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(false)
       }
     }
@@ -119,16 +119,16 @@ public class BasePreferenceStoreTest {
 
   @Test
   public fun testPrefStoreFloat(): Unit = coroutineRule.runBlockingTest {
-    singleton { prefs ->
-      prefs.edit { it[floatPref] = 100.101F }
-      expect(prefs.floatPref()).toBe(100.101F)
-      prefs.floatPref.set(-100.201F)
-      expect(prefs.floatPref()).toBe(-100.201F)
-      prefs.floatPref.asFlow().take(1).toList().let { list ->
+    singleton {
+      edit { it[floatPref] = 100.101F }
+      expect(floatPref()).toBe(100.101F)
+      floatPref.set(-100.201F)
+      expect(floatPref()).toBe(-100.201F)
+      floatPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(-100.201F)
       }
-      prefs.floatPref.set(1000.505F)
-      prefs.floatPref.asFlow().take(1).toList().let { list ->
+      floatPref.set(1000.505F)
+      floatPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(1000.505F)
       }
     }
@@ -136,16 +136,16 @@ public class BasePreferenceStoreTest {
 
   @Test
   public fun testPrefStoreLong(): Unit = coroutineRule.runBlockingTest {
-    singleton { prefs ->
-      prefs.edit { it[longPref] = 100L }
-      expect(prefs.longPref()).toBe(100L)
-      prefs.longPref.set(-100L)
-      expect(prefs.longPref()).toBe(-100L)
-      prefs.longPref.asFlow().take(1).toList().let { list ->
+    singleton {
+      edit { it[longPref] = 100L }
+      expect(longPref()).toBe(100L)
+      longPref.set(-100L)
+      expect(longPref()).toBe(-100L)
+      longPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(-100L)
       }
-      prefs.longPref.set(1000L)
-      prefs.longPref.asFlow().take(1).toList().let { list ->
+      longPref.set(1000L)
+      longPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(1000L)
       }
     }
@@ -153,16 +153,16 @@ public class BasePreferenceStoreTest {
 
   @Test
   public fun testPrefStoreDouble(): Unit = coroutineRule.runBlockingTest {
-    singleton { prefs ->
-      prefs.edit { it[doublePref] = 100.101 }
-      expect(prefs.doublePref()).toBe(100.101)
-      prefs.doublePref.set(-100.201)
-      expect(prefs.doublePref()).toBe(-100.201)
-      prefs.doublePref.asFlow().take(1).toList().let { list ->
+    singleton {
+      edit { it[doublePref] = 100.101 }
+      expect(doublePref()).toBe(100.101)
+      doublePref.set(-100.201)
+      expect(doublePref()).toBe(-100.201)
+      doublePref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(-100.201)
       }
-      prefs.doublePref.set(Double.MAX_VALUE)
-      prefs.doublePref.asFlow().take(1).toList().let { list ->
+      doublePref.set(Double.MAX_VALUE)
+      doublePref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(Double.MAX_VALUE)
       }
     }
@@ -170,16 +170,16 @@ public class BasePreferenceStoreTest {
 
   @Test
   public fun testPrefStoreEnum(): Unit = coroutineRule.runBlockingTest {
-    singleton { prefs ->
-      prefs.edit { it[enumPref] = TestEnum.One }
-      expect(prefs.enumPref()).toBe(TestEnum.One)
-      prefs.enumPref.set(TestEnum.Two)
-      expect(prefs.enumPref()).toBe(TestEnum.Two)
-      prefs.enumPref.asFlow().take(1).toList().let { list ->
+    singleton {
+      edit { it[enumPref] = TestEnum.One }
+      expect(enumPref()).toBe(TestEnum.One)
+      enumPref.set(TestEnum.Two)
+      expect(enumPref()).toBe(TestEnum.Two)
+      enumPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(TestEnum.Two)
       }
-      prefs.enumPref.set(TestEnum.Three)
-      prefs.enumPref.asFlow().take(1).toList().let { list ->
+      enumPref.set(TestEnum.Three)
+      enumPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(TestEnum.Three)
       }
     }
@@ -187,8 +187,8 @@ public class BasePreferenceStoreTest {
 
   @Test
   public fun testPrefStoreReset(): Unit = coroutineRule.runBlockingTest {
-    singleton { prefs ->
-      prefs.edit {
+    singleton {
+      edit {
         it[intPref] = 5555
         it[stringPref] = "testIt"
         it[boolPref] = true
@@ -197,31 +197,42 @@ public class BasePreferenceStoreTest {
         it[doublePref] = 6666.6666
         it[enumPref] = TestEnum.One
       }
-      expect(prefs.intPref()).toBe(5555)
-      expect(prefs.stringPref()).toBe("testIt")
-      expect(prefs.boolPref()).toBe(true)
-      expect(prefs.floatPref()).toBe(5555.5555F)
-      expect(prefs.longPref()).toBe(5555L)
-      expect(prefs.doublePref()).toBe(6666.6666)
-      expect(prefs.enumPref()).toBe(TestEnum.One)
+      expect(intPref()).toBe(5555)
+      expect(stringPref()).toBe("testIt")
+      expect(boolPref()).toBe(true)
+      expect(floatPref()).toBe(5555.5555F)
+      expect(longPref()).toBe(5555L)
+      expect(doublePref()).toBe(6666.6666)
+      expect(enumPref()).toBe(TestEnum.One)
 
-      prefs.resetToDefaultExcept { it === prefs.stringPref }
-      expect(prefs.intPref()).toBe(prefs.intPref.default)
-      expect(prefs.stringPref()).toBe("testIt")
-      expect(prefs.boolPref()).toBe(prefs.boolPref.default)
-      expect(prefs.floatPref()).toBe(prefs.floatPref.default)
-      expect(prefs.longPref()).toBe(prefs.longPref.default)
-      expect(prefs.doublePref()).toBe(prefs.doublePref.default)
-      expect(prefs.enumPref()).toBe(prefs.enumPref.default)
+      resetToDefaultExcept { it === stringPref }
+      expect(intPref()).toBe(intPref.default)
+      expect(stringPref()).toBe("testIt")
+      expect(boolPref()).toBe(boolPref.default)
+      expect(floatPref()).toBe(floatPref.default)
+      expect(longPref()).toBe(longPref.default)
+      expect(doublePref()).toBe(doublePref.default)
+      expect(enumPref()).toBe(enumPref.default)
 
-      prefs.resetAllToDefault()
-      expect(prefs.intPref()).toBe(prefs.intPref.default)
-      expect(prefs.stringPref()).toBe(prefs.stringPref.default)
-      expect(prefs.boolPref()).toBe(prefs.boolPref.default)
-      expect(prefs.floatPref()).toBe(prefs.floatPref.default)
-      expect(prefs.longPref()).toBe(prefs.longPref.default)
-      expect(prefs.doublePref()).toBe(prefs.doublePref.default)
-      expect(prefs.enumPref()).toBe(prefs.enumPref.default)
+      resetAllToDefault()
+      expect(intPref()).toBe(intPref.default)
+      expect(stringPref()).toBe(stringPref.default)
+      expect(boolPref()).toBe(boolPref.default)
+      expect(floatPref()).toBe(floatPref.default)
+      expect(longPref()).toBe(longPref.default)
+      expect(doublePref()).toBe(doublePref.default)
+      expect(enumPref()).toBe(enumPref.default)
+    }
+  }
+
+  @Test
+  public fun testTightWriteReadLoop(): Unit = coroutineRule.runBlockingTest {
+    val ran = Random.Default
+    singleton {
+      (1..100).map { ran.nextInt() }.forEach { number ->
+        intPref(number)
+        expect(intPref()).toBe(number)
+      }
     }
   }
 }
@@ -235,8 +246,8 @@ private enum class TestEnum {
 
 private class TestPrefs(
   dataStore: DataStore<Preferences>,
-  stateFlow: StateFlow<Preferences>
-) : BasePreferenceStore<TestPrefs>(dataStore, stateFlow) {
+  preferences: Preferences
+) : BasePreferenceStore<TestPrefs>(dataStore, preferences) {
   val intPref = intPreference("int_pref", -1)
   val stringPref = stringPreference("string_pref", "nada")
   val boolPref = boolPreference("bool_pref", false)

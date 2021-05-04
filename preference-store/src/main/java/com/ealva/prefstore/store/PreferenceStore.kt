@@ -30,7 +30,6 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.ealva.prefstore.store.PreferenceStore.Preference
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
@@ -56,6 +55,15 @@ public interface PreferenceStore<out T : PreferenceStore<T>> {
     /** The key used to store and retrieve the preference value */
     public val key: Preferences.Key<Stored>
 
+    /** Will be returned if the preference has never been set and used in [resetToDefaultExcept] */
+    public val default: Actual
+
+    /**
+     * Sanitize is an optional function that accepts/rejects/maps a value. [actualToStored]
+     * will call this function, if not null, before any conversion.
+     */
+    public val sanitize: Sanitize<Actual>
+
     /** Invoke a preference to get its value. */
     public operator fun invoke(): Actual
 
@@ -64,9 +72,6 @@ public interface PreferenceStore<out T : PreferenceStore<T>> {
      * use the [edit] function to keep all modification within a single commit.
      */
     public suspend fun set(value: Actual)
-
-    /** Will be returned if the preference has never been set and used in [resetToDefaultExcept] */
-    public val default: Actual
 
     /**
      * If the stored and actual types differ, this function converts the stored type to the actual
@@ -81,12 +86,6 @@ public interface PreferenceStore<out T : PreferenceStore<T>> {
      * be sanitized before conversion to [Stored] type.
      */
     public fun actualToStored(actual: Actual): Stored
-
-    /**
-     * Sanitize is an optional function that accepts/rejects/maps a value. [actualToStored]
-     * will call this function, if not null, before any conversion.
-     */
-    public val sanitize: Sanitize<Actual>
 
     /**
      * A [Flow] of values from this preference. As values are committed they will be emitted from
@@ -119,13 +118,11 @@ public interface PreferenceStore<out T : PreferenceStore<T>> {
   public fun asMap(): Map<Preferences.Key<*>, Any>
 }
 
-public suspend inline fun <T : PreferenceStore<T>> T.resetAllToDefault() {
+public suspend inline fun <T : PreferenceStore<T>> T.resetAllToDefault(): Unit =
   resetToDefaultExcept()
-}
 
-public suspend inline operator fun <S : Any, A : Any> StorePref<S, A>.invoke(value : A) {
+public suspend inline operator fun <S : Any, A : Any> StorePref<S, A>.invoke(value: A): Unit =
   set(value)
-}
 
 /**
  * BasePreference provides necessary functionality for [PreferenceStore.Preference] implementation
@@ -138,13 +135,12 @@ public abstract class BasePreference<S : Any, A : Any>(
   override val key: Preferences.Key<S>,
   override val default: A,
   override val sanitize: Sanitize<A>,
-  private val dataStore: DataStore<Preferences>,
-  private val stateFlow: StateFlow<Preferences>
+  private val store: BasePreferenceStore<*>
 ) : StorePref<S, A> {
-  override fun invoke(): A = storedToActual(stateFlow.value[key])
+  override fun invoke(): A = store.latest(this)
 
   override suspend fun set(value: A) {
-    dataStore.edit { it[key] = actualToStored(value) }
+    store.edit { it[this@BasePreference] = value }
   }
 
   /** If [stored] is null [default] is returned, else it is converted to actual and returned */
@@ -159,7 +155,7 @@ public abstract class BasePreference<S : Any, A : Any>(
 
   protected abstract fun doActualToStored(actual: A): S
 
-  override fun asFlow(): Flow<A> = dataStore.data
+  override fun asFlow(): Flow<A> = store.data
     .catch { ex -> if (ex is IOException) emit(emptyPreferences()) else throw ex }
     .map { preferences -> preferences[key] }
     .map { stored -> storedToActual(stored) }
@@ -175,6 +171,8 @@ public abstract class BasePreference<S : Any, A : Any>(
   }
 
   override fun hashCode(): Int = key.hashCode()
+
+  override fun toString(): String = "$key=${invoke()}"
 }
 
 /**
@@ -184,10 +182,9 @@ public abstract class BasePreference<S : Any, A : Any>(
 private class Unmapped<T : Any>(
   key: Preferences.Key<T>,
   defaultValue: T,
-  dataStore: DataStore<Preferences>,
-  stateFlow: StateFlow<Preferences>,
-  sanitize: Sanitize<T> = null
-) : BasePreference<T, T>(key, defaultValue, sanitize, dataStore, stateFlow) {
+  sanitize: Sanitize<T> = null,
+  store: BasePreferenceStore<*>,
+) : BasePreference<T, T>(key, defaultValue, sanitize, store) {
   override fun doStoredToActual(stored: T): T = stored
   override fun doActualToStored(actual: T): T = actual
 }
@@ -199,32 +196,39 @@ private class Unmapped<T : Any>(
  * implementation.
  */
 public open class BasePreferenceStore<T : PreferenceStore<T>>(
-  protected val dataStore: DataStore<Preferences>,
-  protected val stateFlow: StateFlow<Preferences>
+  private val dataStore: DataStore<Preferences>,
+  private var lastPreferences: Preferences
 ) : PreferenceStore<T> {
   private val prefSet = mutableSetOf<StorePref<*, *>>()
 
+  public val data: Flow<Preferences>
+    get() = dataStore.data
+
+  public fun <S : Any, A : Any> latest(pref: StorePref<S, A>): A {
+    return pref.storedToActual(lastPreferences[pref.key])
+  }
+
   override suspend fun edit(block: T.(MutablePreferenceStore) -> Unit) {
-    dataStore.edit { mutablePreferences ->
+    lastPreferences = dataStore.edit { mutablePreferences ->
       @Suppress("UNCHECKED_CAST") (this as T).block(MutableStore(prefSet, mutablePreferences))
     }
   }
 
   override suspend fun resetToDefaultExcept(predicate: (StorePref<*, *>) -> Boolean) {
-    dataStore.edit { mutablePreferences ->
+    lastPreferences = dataStore.edit { mutablePreferences ->
       prefSet
         .filterNot(predicate)
         .forEach { storePref -> storePref.storeDefault(mutablePreferences) }
     }
   }
 
-  final override fun asMap(): Map<Preferences.Key<*>, Any> = stateFlow.value.asMap()
+  final override fun asMap(): Map<Preferences.Key<*>, Any> = lastPreferences.asMap()
 
   private inline fun <reified T : Any> makePreference(
     name: String,
     default: T,
     noinline sanitize: Sanitize<T>
-  ): UnmappedPref<T> = register(Unmapped(prefKey(name), default, dataStore, stateFlow, sanitize))
+  ): UnmappedPref<T> = register(Unmapped(prefKey(name), default, sanitize, this))
 
   protected fun <S : Any, A : Any> register(pref: StorePref<S, A>): StorePref<S, A> =
     pref.apply { require(prefSet.add(pref)) { "Already contains key ${pref.key}" } }
@@ -276,11 +280,13 @@ public open class BasePreferenceStore<T : PreferenceStore<T>>(
     crossinline serialize: (A) -> S,
     noinline sanitize: Sanitize<A> = null
   ): StorePref<S, A> = register(
-    object : BasePreference<S, A>(prefKey(name), default, sanitize, dataStore, stateFlow) {
+    object : BasePreference<S, A>(prefKey(name), default, sanitize, this) {
       override fun doStoredToActual(stored: S): A = maker(stored)
       override fun doActualToStored(actual: A): S = serialize(actual)
     }
   )
+
+  override fun toString(): String = lastPreferences.toString()
 }
 
 private class MutableStore(
