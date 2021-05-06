@@ -19,23 +19,21 @@ enum class AnEnum {
 typealias SimplePrefsSingleton = PreferenceStoreSingleton<SimplePrefs>
 
 interface SimplePrefs : PreferenceStore<SimplePrefs> {
-  val someBool: UnmappedPref<Boolean>
-  val someInt: UnmappedPref<Int>
+  val someBool: BoolPref
+  val someInt: IntPref
   val anEnum: StorePref<String, AnEnum>
 
   companion object {
-    fun make(dataStore: DataStore<Preferences>, preferences: Preferences): SimplePrefs =
-      SimplePrefsImpl(dataStore, preferences)
+    fun make(storage: Storage): SimplePrefs = SimplePrefsImpl(storage)
   }
 }
 
 private class SimplePrefsImpl(
-  dataStore: DataStore<Preferences>,
-  preferences: Preferences
-) : BasePreferenceStore<SimplePrefs>(dataStore, preferences), SimplePrefs {
-  override val someBool = boolPreference("some_bool", false)
-  override val someInt = intPreference("some_int", 100)
-  override val anEnum = enumByNamePreference("an_enum", AnEnum.First)
+  storage: Storage
+) : BasePreferenceStore<SimplePrefs>(storage), SimplePrefs {
+  override val someBool by preference(false)
+  override val someInt by preference(100)
+  override val anEnum by enumByNamePref(AnEnum.First)
 }
 ```
 SimplePrefs has 3 preferences defined, including an Enum preference, and implements a
@@ -131,24 +129,29 @@ value class Volume(val value: Int) : Comparable<Volume> {
 
 typealias VolumeRange = ClosedRange<Volume>
 
+enum class DuckAction {
+  Duck,
+  Pause,
+  DoNothing;
+}
+
 typealias MillisStorePref = StorePref<Long, Millis>
 typealias VolumeStorePref = StorePref<Int, Volume>
 
 open class BaseAppPrefStore<T : PreferenceStore<T>>(
-  dataStore: DataStore<Preferences>,
-  preferences: Preferences
-) : BasePreferenceStore<T>(dataStore, preferences) {
+  storage: Storage
+) : BasePreferenceStore<T>(storage) {
   protected fun millisPref(
-    name: String,
     default: Millis,
-    sanitize: ((Millis) -> Millis)? = null
-  ): MillisStorePref = makePreference(name, default, ::Millis, { it.value }, sanitize)
+    customName: String? = null,
+    sanitize: ((Millis) -> Millis)? = null,
+  ): MillisStorePref = asTypePref(default, ::Millis, { it.value }, customName, sanitize)
 
   protected fun volumePref(
-    name: String,
     default: Volume,
-    sanitize: ((Volume) -> Volume)? = null
-  ): VolumeStorePref = makePreference(name, default, ::Volume, { it.value }, sanitize)
+    customName: String? = null,
+    sanitize: ((Volume) -> Volume)? = null,
+  ): VolumeStorePref = asTypePref(default, ::Volume, { it.value }, customName, sanitize)
 }
 ```
 Creating a preference requires a name, a default value, a function to map from stored to actual
@@ -158,22 +161,44 @@ value.
 
 This is an example using the new base class and adding a Sanitize function to one of the preferences:
 ```kotlin
-val DUCK_VOLUME_RANGE: VolumeRange = Volume.OFF..Volume.FULL
+typealias AppPrefsSingleton = PreferenceStoreSingleton<AppPrefs>
 
-private class AppPrefsImpl(
-  dataStore: DataStore<Preferences>,
-  preferences: Preferences
-) : BaseAppPrefStore<AppPrefs>(dataStore, preferences), AppPrefs {
+/**
+ * Define an interface for our preferences to facilitate injecting test stubs, managing
+ * dependencies, and to hide implementation details. Clients only need know about this interface.
+ */
+interface AppPrefs : PreferenceStore<AppPrefs> {
+  val firstRun: BoolPref // stores and provides Boolean
+  val lastScanTime: StorePref<Long, Millis> // stores Long, provides value class Millis
+  val duckAction: StorePref<String, DuckAction> // stored String, provides enum DuckAction
+  val duckVolume: StorePref<Int, Volume> // Stores Int, provides value class Volume
 
-  override val firstRun = boolPreference("first_run", true)
-  override val lastScanTime = millisPref("last_scan_time", Millis.ZERO)
+  companion object {
+    val DUCK_VOLUME_RANGE: VolumeRange = Volume.OFF..Volume.FULL
+
+    /** Construct the AppPrefs implementation */
+    fun make(storage: Storage): AppPrefs = AppPrefsImpl(storage)
+  }
+}
+
+/**
+ * Implement a BaseAppPrefStore, which we defined separately to include common types. We might
+ * have different PreferenceStores in the app, for example 1 for the entire app, 1 for a particular
+ * service, another for a difference service, etc. We would put all common preference
+ * specializations in a base class.
+ */
+private class AppPrefsImpl(storage: Storage) : BaseAppPrefStore<AppPrefs>(storage), AppPrefs {
+
+  override val firstRun by preference(true)
+  override val lastScanTime by millisPref(Millis.ZERO)
+  override val duckAction by enumByNamePref(DuckAction.Duck)
 
   /**
    * This preference includes a Sanitize function where it coerces the value to be within the
    * volume range. All preferences may have a Sanitize function to control what is stored (or
    * rejected as invalid)
    */
-  override val duckVolume = volumePref("duck_volume", Volume.HALF) {
+  override val duckVolume by volumePref(Volume.HALF) {
     it.coerceIn(DUCK_VOLUME_RANGE)
   }
 }

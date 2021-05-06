@@ -20,10 +20,11 @@ package com.ealva.prefapp.prefs
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.ealva.prefapp.prefs.AppPrefs.Companion.DUCK_VOLUME_RANGE
+import com.ealva.prefstore.store.BoolPref
 import com.ealva.prefstore.store.PreferenceStore
 import com.ealva.prefstore.store.PreferenceStoreSingleton
+import com.ealva.prefstore.store.Storage
 import com.ealva.prefstore.store.StorePref
-import com.ealva.prefstore.store.UnmappedPref
 
 /** To build:
  * ```AppPrefsSingleton(AppPrefs.Companion::make, androidContext(), fileName)```
@@ -35,7 +36,7 @@ typealias AppPrefsSingleton = PreferenceStoreSingleton<AppPrefs>
  * dependencies, and to hide implementation details. Clients only need know about this interface.
  */
 interface AppPrefs : PreferenceStore<AppPrefs> {
-  val firstRun: UnmappedPref<Boolean> // stores and provides Boolean
+  val firstRun: BoolPref // stores and provides Boolean
   val lastScanTime: StorePref<Long, Millis> // stores Long, provides value class Millis
   val duckAction: StorePref<String, DuckAction> // stored String, provides enum DuckAction
   val duckVolume: StorePref<Int, Volume> // Stores Int, provides value class Volume
@@ -44,8 +45,7 @@ interface AppPrefs : PreferenceStore<AppPrefs> {
     val DUCK_VOLUME_RANGE: VolumeRange = Volume.OFF..Volume.FULL
 
     /** Construct the AppPrefs implementation */
-    fun make(dataStore: DataStore<Preferences>, preferences: Preferences): AppPrefs =
-      AppPrefsImpl(dataStore, preferences)
+    fun make(storage: Storage): AppPrefs = AppPrefsImpl(storage)
   }
 }
 
@@ -55,21 +55,18 @@ interface AppPrefs : PreferenceStore<AppPrefs> {
  * service, another for a difference service, etc. We would put all common preference
  * specializations in a base class.
  */
-private class AppPrefsImpl(
-  dataStore: DataStore<Preferences>,
-  preferences: Preferences
-) : BaseAppPrefStore<AppPrefs>(dataStore, preferences), AppPrefs {
+private class AppPrefsImpl(storage: Storage) : BaseAppPrefStore<AppPrefs>(storage), AppPrefs {
 
-  override val firstRun = boolPreference("first_run", true)
-  override val lastScanTime = millisPref("last_scan_time", Millis.ZERO)
-  override val duckAction = enumByNamePreference("duck_action", DuckAction.Duck)
+  override val firstRun by preference(true)
+  override val lastScanTime by millisPref(Millis.ZERO)
+  override val duckAction by enumByNamePref(DuckAction.Duck)
 
   /**
    * This preference includes a Sanitize function where it coerces the value to be within the
    * volume range. All preferences may have a Sanitize function to control what is stored (or
    * rejected as invalid)
    */
-  override val duckVolume = volumePref("duck_volume", Volume.HALF) {
+  override val duckVolume by volumePref(Volume.HALF) {
     it.coerceIn(DUCK_VOLUME_RANGE)
   }
 }

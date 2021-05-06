@@ -17,8 +17,6 @@
 
 package com.ealva.prefstore.store
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ealva.prefstore.test.shared.CoroutineRule
 import com.nhaarman.expect.expect
@@ -53,12 +51,14 @@ public class BasePreferenceStoreTest {
   private lateinit var dataStoreScope: TestCoroutineScope
   private lateinit var testFile: File
   private lateinit var singleton: PreferenceStoreSingleton<TestPrefs>
+  private lateinit var otherFile: File
 
   @Before
   public fun setup() {
     testFile = tempFolder.newFile("dummy.preferences_pb")
+    otherFile = tempFolder.newFile("another.preferences_pb")
     dataStoreScope = TestCoroutineScope(coroutineRule.testDispatcher + Job())
-    singleton = PreferenceStoreSingleton(::TestPrefs, testFile, dataStoreScope)
+    singleton = PreferenceStoreSingleton(TestPrefs.Companion::make, testFile, dataStoreScope)
   }
 
   @After
@@ -67,7 +67,7 @@ public class BasePreferenceStoreTest {
   }
 
   @Test
-  public fun testPrefStoreString(): Unit = coroutineRule.runBlockingTest {
+  public fun testStringPref(): Unit = coroutineRule.runBlockingTest {
     singleton {
       edit { it[stringPref] = "first" }
       expect(stringPref()).toBe("first")
@@ -84,7 +84,24 @@ public class BasePreferenceStoreTest {
   }
 
   @Test
-  public fun testPrefStoreInt(): Unit = coroutineRule.runBlockingTest {
+  public fun testOptStringPref(): Unit = coroutineRule.runBlockingTest {
+    singleton {
+      edit { it[optStringPref] = "first" }
+      expect(optStringPref()).toBe("first")
+      optStringPref.set("second")
+      expect(optStringPref()).toBe("second")
+      optStringPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe("second")
+      }
+      optStringPref.set("third")
+      optStringPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe("third")
+      }
+    }
+  }
+
+  @Test
+  public fun testIntPref(): Unit = coroutineRule.runBlockingTest {
     singleton {
       edit { it[intPref] = 100 }
       expect(intPref()).toBe(100)
@@ -101,7 +118,24 @@ public class BasePreferenceStoreTest {
   }
 
   @Test
-  public fun testPrefStoreBoolean(): Unit = coroutineRule.runBlockingTest {
+  public fun testOptIntPref(): Unit = coroutineRule.runBlockingTest {
+    singleton {
+      edit { it[optIntPref] = 100 }
+      expect(optIntPref()).toBe(100)
+      optIntPref.set(-100)
+      expect(optIntPref()).toBe(-100)
+      optIntPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(-100)
+      }
+      optIntPref.set(1000)
+      optIntPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(1000)
+      }
+    }
+  }
+
+  @Test
+  public fun testBooleanPref(): Unit = coroutineRule.runBlockingTest {
     singleton {
       edit { it[boolPref] = false }
       expect(boolPref()).toBe(false)
@@ -118,7 +152,24 @@ public class BasePreferenceStoreTest {
   }
 
   @Test
-  public fun testPrefStoreFloat(): Unit = coroutineRule.runBlockingTest {
+  public fun testOpBooleanPref(): Unit = coroutineRule.runBlockingTest {
+    singleton {
+      edit { it[optBoolPref] = false }
+      expect(optBoolPref()).toBe(false)
+      optBoolPref.set(true)
+      expect(optBoolPref()).toBe(true)
+      optBoolPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(true)
+      }
+      optBoolPref.set(false)
+      optBoolPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(false)
+      }
+    }
+  }
+
+  @Test
+  public fun testFloatPref(): Unit = coroutineRule.runBlockingTest {
     singleton {
       edit { it[floatPref] = 100.101F }
       expect(floatPref()).toBe(100.101F)
@@ -135,7 +186,24 @@ public class BasePreferenceStoreTest {
   }
 
   @Test
-  public fun testPrefStoreLong(): Unit = coroutineRule.runBlockingTest {
+  public fun testOptFloatPref(): Unit = coroutineRule.runBlockingTest {
+    singleton {
+      edit { it[optFloatPref] = 100.101F }
+      expect(optFloatPref()).toBe(100.101F)
+      optFloatPref.set(-100.201F)
+      expect(optFloatPref()).toBe(-100.201F)
+      optFloatPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(-100.201F)
+      }
+      optFloatPref.set(1000.505F)
+      optFloatPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(1000.505F)
+      }
+    }
+  }
+
+  @Test
+  public fun testLongPref(): Unit = coroutineRule.runBlockingTest {
     singleton {
       edit { it[longPref] = 100L }
       expect(longPref()).toBe(100L)
@@ -152,7 +220,22 @@ public class BasePreferenceStoreTest {
   }
 
   @Test
-  public fun testPrefStoreDouble(): Unit = coroutineRule.runBlockingTest {
+  public fun testOptLongPref(): Unit = coroutineRule.runBlockingTest {
+    singleton {
+      expect(optLongPref.key.name).toBe("optLongPref")
+      expect(optLongPref()).toBeNull()
+      optLongPref(100)
+      expect(optLongPref()).toBe(100)
+      edit { it[optLongPref] = 200 }
+      expect(optLongPref()).toBe(200)
+      optLongPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(200)
+      }
+    }
+  }
+
+  @Test
+  public fun testDoublePref(): Unit = coroutineRule.runBlockingTest {
     singleton {
       edit { it[doublePref] = 100.101 }
       expect(doublePref()).toBe(100.101)
@@ -169,7 +252,24 @@ public class BasePreferenceStoreTest {
   }
 
   @Test
-  public fun testPrefStoreEnum(): Unit = coroutineRule.runBlockingTest {
+  public fun testOptDoublePref(): Unit = coroutineRule.runBlockingTest {
+    singleton {
+      edit { it[optDoublePref] = 100.101 }
+      expect(optDoublePref()).toBe(100.101)
+      optDoublePref.set(-100.201)
+      expect(optDoublePref()).toBe(-100.201)
+      optDoublePref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(-100.201)
+      }
+      optDoublePref.set(Double.MAX_VALUE)
+      optDoublePref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(Double.MAX_VALUE)
+      }
+    }
+  }
+
+  @Test
+  public fun testEnumPref(): Unit = coroutineRule.runBlockingTest {
     singleton {
       edit { it[enumPref] = TestEnum.One }
       expect(enumPref()).toBe(TestEnum.One)
@@ -180,6 +280,23 @@ public class BasePreferenceStoreTest {
       }
       enumPref.set(TestEnum.Three)
       enumPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(TestEnum.Three)
+      }
+    }
+  }
+
+  @Test
+  public fun testOptEnumPref(): Unit = coroutineRule.runBlockingTest {
+    singleton {
+      edit { it[optEnumPref] = TestEnum.One }
+      expect(optEnumPref()).toBe(TestEnum.One)
+      optEnumPref(TestEnum.Two)
+      expect(optEnumPref()).toBe(TestEnum.Two)
+      optEnumPref.asFlow().take(1).toList().let { list ->
+        expect(list.first()).toBe(TestEnum.Two)
+      }
+      optEnumPref.set(TestEnum.Three)
+      optEnumPref.asFlow().take(1).toList().let { list ->
         expect(list.first()).toBe(TestEnum.Three)
       }
     }
@@ -205,7 +322,14 @@ public class BasePreferenceStoreTest {
       expect(doublePref()).toBe(6666.6666)
       expect(enumPref()).toBe(TestEnum.One)
 
-      resetToDefaultExcept { it === stringPref }
+      edit {
+        it.clear(intPref)
+        it.clear(boolPref)
+        it.clear(floatPref)
+        it.clear(longPref)
+        it.clear(doublePref)
+        it.clear(enumPref)
+      }
       expect(intPref()).toBe(intPref.default)
       expect(stringPref()).toBe("testIt")
       expect(boolPref()).toBe(boolPref.default)
@@ -214,7 +338,7 @@ public class BasePreferenceStoreTest {
       expect(doublePref()).toBe(doublePref.default)
       expect(enumPref()).toBe(enumPref.default)
 
-      resetAllToDefault()
+      clear()
       expect(intPref()).toBe(intPref.default)
       expect(stringPref()).toBe(stringPref.default)
       expect(boolPref()).toBe(boolPref.default)
@@ -235,6 +359,45 @@ public class BasePreferenceStoreTest {
       }
     }
   }
+
+  @Test
+  public fun testClearSomePrefs(): Unit = coroutineRule.runBlockingTest {
+    singleton {
+      edit {
+        it[intPref] = 5555
+        it[stringPref] = "testIt"
+        it[boolPref] = !boolPref.default
+        it[floatPref] = 5555.5555F
+        it[longPref] = 5555L
+        it[doublePref] = 6666.6666
+        it[enumPref] = TestEnum.One
+      }
+      expect(intPref()).toBe(5555)
+      expect(stringPref()).toBe("testIt")
+      expect(boolPref()).toBe(!boolPref.default)
+      expect(floatPref()).toBe(5555.5555F)
+      expect(longPref()).toBe(5555L)
+      expect(doublePref()).toBe(6666.6666)
+      expect(enumPref()).toBe(TestEnum.One)
+
+      clear(intPref, floatPref, enumPref)
+      expect(intPref()).toBe(intPref.default)
+      expect(stringPref()).toBe("testIt")
+      expect(boolPref()).toBe(!boolPref.default)
+      expect(floatPref()).toBe(floatPref.default)
+      expect(longPref()).toBe(5555L)
+      expect(doublePref()).toBe(6666.6666)
+      expect(enumPref()).toBe(enumPref.default)
+    }
+  }
+
+  @Test(expected = IllegalArgumentException::class)
+  public fun testClearBadPreference(): Unit = coroutineRule.runBlockingTest {
+    val other = OtherPrefs(otherFile.makeDataStoreStorage(dataStoreScope))
+    singleton {
+      clear(other.otherPref)
+    }
+  }
 }
 
 private enum class TestEnum {
@@ -244,15 +407,44 @@ private enum class TestEnum {
   Three;
 }
 
-private class TestPrefs(
-  dataStore: DataStore<Preferences>,
-  preferences: Preferences
-) : BasePreferenceStore<TestPrefs>(dataStore, preferences) {
-  val intPref = intPreference("int_pref", -1)
-  val stringPref = stringPreference("string_pref", "nada")
-  val boolPref = boolPreference("bool_pref", false)
-  val floatPref = floatPreference("float_pref", Float.MIN_VALUE)
-  val longPref = longPreference("long_pref", Long.MIN_VALUE)
-  val doublePref = doublePreference("double_pref", Double.MIN_VALUE)
-  val enumPref = enumByNamePreference("enum_pref", TestEnum.Unknown)
+private interface TestPrefs : PreferenceStore<TestPrefs> {
+  val intPref: IntPref
+  val optIntPref: OptIntPref
+  val stringPref: StringPref
+  val optStringPref: OptStringPref
+  val boolPref: BoolPref
+  val optBoolPref: OptBoolPref
+  val floatPref: FloatPref
+  val optFloatPref: OptFloatPref
+  val longPref: LongPref
+  val optLongPref: OptLongPref
+  val doublePref: DoublePref
+  val optDoublePref: OptDoublePref
+  val enumPref: PreferenceStore.Preference<String, TestEnum>
+  val optEnumPref: PreferenceStore.Preference<String?, TestEnum?>
+
+  companion object {
+    fun make(storage: Storage): TestPrefs = TestPrefsImpl(storage)
+  }
+}
+
+private class TestPrefsImpl(storage: Storage) : BasePreferenceStore<TestPrefs>(storage), TestPrefs {
+  override val intPref by preference(-1)
+  override val optIntPref by optPreference<Int>()
+  override val stringPref by preference("nada")
+  override val optStringPref by optPreference<String>()
+  override val boolPref by preference(false)
+  override val optBoolPref by optPreference<Boolean>()
+  override val floatPref by preference(Float.MIN_VALUE)
+  override val optFloatPref by optPreference<Float>()
+  override val longPref by preference(Long.MIN_VALUE)
+  override val optLongPref by optPreference<Long>()
+  override val doublePref by preference(Double.MIN_VALUE)
+  override val optDoublePref by optPreference<Double>()
+  override val enumPref by enumByNamePref(TestEnum.Unknown)
+  override val optEnumPref by optEnumByNamePref<TestEnum>()
+}
+
+private class OtherPrefs(storage: Storage) : BasePreferenceStore<OtherPrefs>(storage) {
+  val otherPref by preference(0)
 }

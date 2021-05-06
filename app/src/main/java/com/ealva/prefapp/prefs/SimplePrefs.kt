@@ -17,13 +17,13 @@
 
 package com.ealva.prefapp.prefs
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import com.ealva.prefstore.store.BasePreferenceStore
+import com.ealva.prefstore.store.BoolPref
+import com.ealva.prefstore.store.IntPref
 import com.ealva.prefstore.store.PreferenceStore
 import com.ealva.prefstore.store.PreferenceStoreSingleton
+import com.ealva.prefstore.store.Storage
 import com.ealva.prefstore.store.StorePref
-import com.ealva.prefstore.store.UnmappedPref
 
 enum class AnEnum {
   First,
@@ -34,22 +34,20 @@ enum class AnEnum {
 typealias SimplePrefsSingleton = PreferenceStoreSingleton<SimplePrefs>
 
 interface SimplePrefs : PreferenceStore<SimplePrefs> {
-  val someBool: UnmappedPref<Boolean>
-  val someInt: UnmappedPref<Int>
+  val someBool: BoolPref
+  val someInt: IntPref
   val anEnum: StorePref<String, AnEnum>
 
   companion object {
-    fun make(dataStore: DataStore<Preferences>, preferences: Preferences): SimplePrefs =
-      SimplePrefsImpl(dataStore, preferences)
+    fun make(storage: Storage): SimplePrefs = SimplePrefsImpl(storage)
   }
 }
 
 @Suppress("MagicNumber")
 private class SimplePrefsImpl(
-  dataStore: DataStore<Preferences>,
-  preferences: Preferences
-) : BasePreferenceStore<SimplePrefs>(dataStore, preferences), SimplePrefs {
-  override val someBool = boolPreference("some_bool", false)
-  override val someInt = intPreference("some_int", 100)
-  override val anEnum = enumByNamePreference("an_enum", AnEnum.First)
+  storage: Storage
+) : BasePreferenceStore<SimplePrefs>(storage), SimplePrefs {
+  override val someBool by preference(false)
+  override val someInt by preference(100)
+  override val anEnum by enumByNamePref(AnEnum.First)
 }

@@ -17,10 +17,9 @@
 
 package com.ealva.prefapp.prefs
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import com.ealva.prefstore.store.BasePreferenceStore
 import com.ealva.prefstore.store.PreferenceStore
+import com.ealva.prefstore.store.Storage
 import com.ealva.prefstore.store.StorePref
 
 @JvmInline
@@ -60,18 +59,17 @@ typealias VolumeStorePref = StorePref<Int, Volume>
 
 @Suppress("SameParameterValue")
 open class BaseAppPrefStore<T : PreferenceStore<T>>(
-  dataStore: DataStore<Preferences>,
-  preferences: Preferences
-) : BasePreferenceStore<T>(dataStore, preferences) {
+  storage: Storage
+) : BasePreferenceStore<T>(storage) {
   protected fun millisPref(
-    name: String,
     default: Millis,
-    sanitize: ((Millis) -> Millis)? = null
-  ): MillisStorePref = makePreference(name, default, ::Millis, { it.value }, sanitize)
+    customName: String? = null,
+    sanitize: ((Millis) -> Millis)? = null,
+  ): MillisStorePref = asTypePref(default, ::Millis, { it.value }, customName, sanitize)
 
   protected fun volumePref(
-    name: String,
     default: Volume,
-    sanitize: ((Volume) -> Volume)? = null
-  ): VolumeStorePref = makePreference(name, default, ::Volume, { it.value }, sanitize)
+    customName: String? = null,
+    sanitize: ((Volume) -> Volume)? = null,
+  ): VolumeStorePref = asTypePref(default, ::Volume, { it.value }, customName, sanitize)
 }
