@@ -29,6 +29,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.ealva.prefstore.store.PreferenceStore.Preference
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 
@@ -41,13 +42,31 @@ public interface MutablePreferenceStore {
 }
 
 /**
+ * Simply contains a PreferenceStore<T>. This is not a data class because we want identity
+ * equals and hashCode, and we don't need any extra generated code. This is currently used so
+ * that PreferenceStore doesn't need a "correct" equals function and items emitted on
+ * [PreferenceStore.updateFlow]
+ */
+public class StoreHolder<T : PreferenceStore<T>>(public val store: T)
+
+public inline operator fun <T : PreferenceStore<T>> StoreHolder<T>.invoke(
+  block: (T) -> Unit
+): Unit = block(store)
+
+
+/**
  * PreferenceStore wraps a DataStore<Preference> and provides a higher level abstraction of a
  * [Preference], getting and setting values, flows of values for a [Preference], and mapping of
  * types used by a client and the type stored in the [DataStore].
  *
  * PreferenceStore is parameterized with the subclass that contains the [Preference] values
  */
-public interface PreferenceStore<out T : PreferenceStore<T>> {
+public interface PreferenceStore<T : PreferenceStore<T>> {
+
+  /**
+   * Whenever this PreferenceStore is updated it is emitted here contained in a [StoreHolder].
+   */
+  public val updateFlow: Flow<StoreHolder<T>>
 
   public interface Preference<S, A> : ReadOnlyProperty<PreferenceStore<*>, Preference<S, A>> {
 
@@ -118,17 +137,28 @@ public open class BasePreferenceStore<T : PreferenceStore<T>>(
 ) : PreferenceStore<T> {
   private val prefSet = mutableSetOf<StorePref<*, *>>()
 
-  internal val data: Flow<Preferences>
+  internal val prefsFlow: Flow<Preferences>
     get() = storage.data
+
+  @Suppress("UNCHECKED_CAST")
+  /**
+   * Why emit a [StoreHolder] instead of the [PreferenceStore] itself - to guarantee each
+   * emission is not equal. We cannot control the equals methods of subclasses, so we'll wrap it
+   * into another class where we can control equals.
+   */
+  override val updateFlow: MutableStateFlow<StoreHolder<T>> by lazy {
+    MutableStateFlow(StoreHolder(this as T))
+  }
 
   internal fun <S, A> getPreferenceValue(pref: StorePref<S, A>): A =
     pref.storedToActual(storage[pref.key])
 
+  @Suppress("UNCHECKED_CAST")
   override suspend fun edit(block: T.(MutablePreferenceStore) -> Unit) {
     // Don't copy prefSet. Due to how delegated properties behave a particular preference
     // may not exist in the set until it's referenced inside the block()
-    @Suppress("UNCHECKED_CAST")
     storage.edit { (this as T).block(MutableStore(prefSet, it)) }
+    updateFlow.value = StoreHolder(this as T)
   }
 
   override suspend fun clear(vararg prefs: Preference<*, *>) {
@@ -195,7 +225,26 @@ public open class BasePreferenceStore<T : PreferenceStore<T>>(
     sanitize
   )
 
+  protected fun <S : Enum<S>> enumSetByNamePref(
+    default: Set<S>,
+    customName: String? = null,
+    sanitize: Sanitize<Set<S>> = null
+  ): StorePref<Set<String>, Set<S>> = asTypePref(
+    requireNotEmpty(default) { "Default set must have at least 1 item" },
+    { set ->
+      if (set.isEmpty()) default
+      else set.mapTo(mutableSetOf()) { default.first()::class.java.reifyEnum(it, default.first()) }
+    },
+    { set -> set.mapTo(mutableSetOf()) { it.name } },
+    customName,
+    sanitize
+  )
+
   override fun toString(): String = storage.toString()
+
+  @Suppress("EqualsAlwaysReturnsTrueOrFalse")
+  override fun equals(other: Any?): Boolean = false
+  override fun hashCode(): Int = javaClass.hashCode()
 }
 
 private class MutableStore(
@@ -224,11 +273,12 @@ public fun <T> prefKey(name: String, theClass: KClass<*>): Preferences.Key<T> {
     Float::class -> floatPreferencesKey(name)
     Long::class -> longPreferencesKey(name)
     Double::class -> doublePreferencesKey(name)
+    Set::class -> stringPreferencesKey(name)
     else -> throw IllegalArgumentException("Type not supported: ${theClass.simpleName}")
   } as Preferences.Key<T>
 }
 
-private fun <T : Enum<T>> Class<T>.reifyEnum(name: String?, default: T): T =
+private fun <T : Enum<T>> Class<out T>.reifyEnum(name: String?, default: T): T =
   enumConstants.firstOrNull { name == it.name } ?: default
 
 private fun Array<out Preference<*, *>>.keys(): String = buildString {
@@ -238,4 +288,8 @@ private fun Array<out Preference<*, *>>.keys(): String = buildString {
     append(preference.key)
   }
   append(']')
+}
+
+private fun <T : Any> requireNotEmpty(value: Set<T>, lazyMessage: () -> Any): Set<T> {
+  return if (value.isEmpty()) throw IllegalArgumentException(lazyMessage().toString()) else value
 }

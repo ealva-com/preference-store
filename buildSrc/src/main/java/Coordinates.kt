@@ -25,11 +25,23 @@ object AppCoordinates {
 object PreferenceStoreCoordinates {
   // All parts of versioning can be up to 2 digits: 0-99
   private const val versionMajor = 0
-  private const val versionMinor = 6
-  private const val versionPatch = 5
+  private const val versionMinor = 7
+  private const val versionPatch = 1
   private const val versionBuild = 0
 
   const val LIBRARY_VERSION_CODE = versionMajor * 1000000 + versionMinor * 10000 +
     versionPatch * 100 + versionBuild
-  const val LIBRARY_VERSION = "$versionMajor.$versionMinor.$versionPatch-$versionBuild"
+  const val LIBRARY_VERSION = "$versionMajor.$versionMinor.$versionPatch-SNAPSHOT"
+}
+
+object ComposePreferenceCoordinates {
+  // All parts of versioning can be up to 2 digits: 0-99
+  private const val versionMajor = 0
+  private const val versionMinor = 7
+  private const val versionPatch = 1
+  private const val versionBuild = 0
+
+  const val LIBRARY_VERSION_CODE = versionMajor * 1000000 + versionMinor * 10000 +
+    versionPatch * 100 + versionBuild
+  const val LIBRARY_VERSION = "$versionMajor.$versionMinor.$versionPatch-SNAPSHOT"
 }

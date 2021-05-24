@@ -15,24 +15,12 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Suppress("MagicNumber")
+package com.ealva.comppref.pref
 
-package com.ealva.prefapp.ui.main
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.structuralEqualityPolicy
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import com.ealva.prefapp.ui.PreferenceStoreAppTheme
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+public val GroupEnabledStatus: ProvidableCompositionLocal<Boolean> =
+  compositionLocalOf(structuralEqualityPolicy()) { true }
 
-class MainActivity : ComponentActivity() {
-  @OptIn(ExperimentalCoroutinesApi::class)
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContent {
-      PreferenceStoreAppTheme {
-        PreferenceStoreApp()
-      }
-    }
-  }
-}

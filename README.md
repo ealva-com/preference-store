@@ -168,7 +168,7 @@ typealias AppPrefsSingleton = PreferenceStoreSingleton<AppPrefs>
  * dependencies, and to hide implementation details. Clients only need know about this interface.
  */
 interface AppPrefs : PreferenceStore<AppPrefs> {
-  val firstRun: BoolPref // stores and provides Boolean
+  val enableGroup: BoolPref // stores and provides Boolean
   val lastScanTime: StorePref<Long, Millis> // stores Long, provides value class Millis
   val duckAction: StorePref<String, DuckAction> // stored String, provides enum DuckAction
   val duckVolume: StorePref<Int, Volume> // Stores Int, provides value class Volume
@@ -189,7 +189,7 @@ interface AppPrefs : PreferenceStore<AppPrefs> {
  */
 private class AppPrefsImpl(storage: Storage) : BaseAppPrefStore<AppPrefs>(storage), AppPrefs {
 
-  override val firstRun by preference(true)
+  override val enableGroup by preference(true)
   override val lastScanTime by millisPref(Millis.ZERO)
   override val duckAction by enumByNamePref(DuckAction.Duck)
 
@@ -212,8 +212,7 @@ Ensure you are using the latest [published version][maven-preference-store] or t
 ## Pull/Change Requests
 Suggestions and Pull Requests welcome. Also, if you have a question, or a proposed change, open an
 issue for discussion.
-## Future
-I have plans on adding a library which has [Compose][compose] functions for preference UI.
+
 
 [maven-preference-store]: https://search.maven.org/search?q=g:com.ealva%20AND%20a:preference-store
 [preference-store-snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/ealva/preference-store/

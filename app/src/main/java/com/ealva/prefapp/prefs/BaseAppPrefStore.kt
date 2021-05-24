@@ -27,11 +27,15 @@ value class Millis(val value: Long) : Comparable<Millis> {
   override fun toString(): String = value.toString()
 
   override operator fun compareTo(other: Millis): Int = value.compareTo(other.value)
+  operator fun minus(other: Millis): Millis = Millis(value - other.value)
 
   companion object {
     val ZERO = Millis(0)
+    val TWO_SECONDS = Millis(2000)
   }
 }
+
+typealias MillisRange = ClosedRange<Millis>
 
 @JvmInline
 value class Volume(val value: Int) : Comparable<Volume> {
@@ -52,6 +56,12 @@ enum class DuckAction {
   Duck,
   Pause,
   DoNothing;
+}
+
+enum class ItemType {
+  Type1,
+  Type2,
+  Type3;
 }
 
 typealias MillisStorePref = StorePref<Long, Millis>

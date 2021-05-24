@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License along with
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
-version = PreferenceStoreCoordinates.LIBRARY_VERSION
+
+version = ComposePreferenceCoordinates.LIBRARY_VERSION
 
 plugins {
   id("com.android.library")
-  kotlin("android")
-  id("org.jetbrains.dokka")
-  id("com.vanniktech.maven.publish")
+  id("kotlin-android")
 }
 
 android {
@@ -29,11 +28,10 @@ android {
   defaultConfig {
     minSdk = Sdk.MIN_SDK_VERSION
     targetSdk = Sdk.TARGET_SDK_VERSION
+    version = ComposePreferenceCoordinates.LIBRARY_VERSION
 
-    version = PreferenceStoreCoordinates.LIBRARY_VERSION
-
-//    versionCode = PreferenceStoreCoordinates.LIBRARY_VERSION_CODE
-//    versionName = PreferenceStoreCoordinates.LIBRARY_VERSION
+//    versionCode = ComposePreferenceCoordinates.LIBRARY_VERSION_CODE
+//    versionName = ComposePreferenceCoordinates.LIBRARY_VERSION
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles("consumer-rules.pro")
@@ -50,16 +48,19 @@ android {
     }
   }
 
+  buildFeatures {
+    // Enables Jetpack Compose for this module
+    compose = true
+  }
+
+  composeOptions {
+    kotlinCompilerExtensionVersion = "1.0.0-beta06"
+  }
+
   compileOptions {
     isCoreLibraryDesugaringEnabled = true
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-  }
-
-  sourceSets {
-    val sharedTestDir = "src/sharedTest/java"
-    getByName("test").java.srcDir(sharedTestDir)
-    getByName("androidTest").java.srcDir(sharedTestDir)
   }
 
   lint {
@@ -90,7 +91,8 @@ android {
       "-XXLanguage:+InlineClasses",
       "-Xinline-classes",
       "-Xopt-in=kotlin.RequiresOptIn",
-      "-Xexplicit-api=warning"
+      "-Xexplicit-api=warning",
+      "-Xskip-prerelease-check"
     )
   }
 }
@@ -98,11 +100,22 @@ android {
 dependencies {
   coreLibraryDesugaring(ToolsLib.DESUGARING)
   implementation(kotlin("stdlib-jdk8"))
+  implementation(project(":preference-store"))
   implementation(AndroidxLibs.APPCOMPAT)
   implementation(AndroidxLibs.CORE_KTX)
   implementation(AndroidxLibs.DATASTORE_PREFERENCES)
+  implementation(AndroidxLibs.LIFECYCLE_RUNTIME_KTX)
+
   implementation(ThirdParty.COROUTINE_CORE)
   implementation(ThirdParty.COROUTINE_ANDROID)
+
+  implementation(ComposeLibs.UI)
+  implementation(ComposeLibs.UI_TOOLING)
+  implementation(ComposeLibs.FOUNDATION)
+  implementation(ComposeLibs.MATERIAL)
+
+  implementation(AndroidxLibs.ACTIVITY_COMPOSE)
+  implementation(AndroidxLibs.CONSTRAINT_COMPOSE)
 
   testImplementation(TestingLib.JUNIT)
   testImplementation(AndroidTestingLib.ANDROIDX_TEST_CORE) {

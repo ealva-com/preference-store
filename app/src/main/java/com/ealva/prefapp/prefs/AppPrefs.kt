@@ -17,8 +17,7 @@
 
 package com.ealva.prefapp.prefs
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
+import com.ealva.prefapp.prefs.AppPrefs.Companion.CROSS_FADE_RANGE
 import com.ealva.prefapp.prefs.AppPrefs.Companion.DUCK_VOLUME_RANGE
 import com.ealva.prefstore.store.BoolPref
 import com.ealva.prefstore.store.PreferenceStore
@@ -36,13 +35,17 @@ typealias AppPrefsSingleton = PreferenceStoreSingleton<AppPrefs>
  * dependencies, and to hide implementation details. Clients only need know about this interface.
  */
 interface AppPrefs : PreferenceStore<AppPrefs> {
-  val firstRun: BoolPref // stores and provides Boolean
+  val enableGroup: BoolPref // stores and provides Boolean
   val lastScanTime: StorePref<Long, Millis> // stores Long, provides value class Millis
   val duckAction: StorePref<String, DuckAction> // stored String, provides enum DuckAction
   val duckVolume: StorePref<Int, Volume> // Stores Int, provides value class Volume
+  val crossFadeLength: StorePref<Long, Millis>
+  val autoDownload: BoolPref
+  val itemType: PreferenceStore.Preference<Set<String>, Set<ItemType>>
 
   companion object {
     val DUCK_VOLUME_RANGE: VolumeRange = Volume.OFF..Volume.FULL
+    val CROSS_FADE_RANGE: ClosedRange<Millis> = Millis(2000)..Millis(8000)
 
     /** Construct the AppPrefs implementation */
     fun make(storage: Storage): AppPrefs = AppPrefsImpl(storage)
@@ -57,9 +60,14 @@ interface AppPrefs : PreferenceStore<AppPrefs> {
  */
 private class AppPrefsImpl(storage: Storage) : BaseAppPrefStore<AppPrefs>(storage), AppPrefs {
 
-  override val firstRun by preference(true)
+  override val enableGroup by preference(true)
   override val lastScanTime by millisPref(Millis.ZERO)
   override val duckAction by enumByNamePref(DuckAction.Duck)
+  override val crossFadeLength by millisPref(Millis.TWO_SECONDS) {
+    it.coerceIn(CROSS_FADE_RANGE)
+  }
+  override val autoDownload: BoolPref by preference(false)
+  override val itemType by enumSetByNamePref(setOf(ItemType.Type1))
 
   /**
    * This preference includes a Sanitize function where it coerces the value to be within the

@@ -22,46 +22,32 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 
-public interface PreferenceStoreSingleton<T : PreferenceStore<T>> {
-  public suspend fun instance(): T
-
-  public companion object {
-    public operator fun <T : PreferenceStore<T>> invoke(
-      maker: (Storage) -> T,
-      context: Context,
-      fileName: String,
-      scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-    ): PreferenceStoreSingleton<T> =
-      PreferenceStoreSingletonImpl(maker, context.preferencesDataStoreFile(fileName), scope)
-
-    /** File must have the extension "preferences_pb" */
-    public operator fun <T : PreferenceStore<T>> invoke(
-      maker: (Storage) -> T,
-      file: File,
-      scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-    ): PreferenceStoreSingleton<T> = PreferenceStoreSingletonImpl(maker, file, scope)
-  }
-}
-
-public suspend inline operator fun <T : PreferenceStore<T>, R> PreferenceStoreSingleton<T>.invoke(
-  block: T.() -> R
-): R = instance().block()
-
-private class PreferenceStoreSingletonImpl<T : PreferenceStore<T>>(
+public class PreferenceStoreSingleton<T : PreferenceStore<T>>(
   private val storeMaker: (Storage) -> T,
   private val file: File,
   private val scope: CoroutineScope
-) : PreferenceStoreSingleton<T> {
+) {
   @Volatile
   private var instance: T? = null
   private val mutex = Mutex()
 
-  override suspend fun instance(): T {
+  public constructor(
+    maker: (Storage) -> T,
+    context: Context,
+    fileName: String,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+  ) : this(maker, context.preferencesDataStoreFile(fileName), scope)
+
+  public suspend fun asFlow(): Flow<T> = instance().updateFlow.map { it.store }
+
+  public suspend fun instance(): T {
     return instance ?: withContext(scope.coroutineContext) {
       mutex.withLock {
         instance ?: storeMaker(file.makeDataStoreStorage(scope)).also { instance = it }
@@ -69,3 +55,7 @@ private class PreferenceStoreSingletonImpl<T : PreferenceStore<T>>(
     }
   }
 }
+
+public suspend inline operator fun <T : PreferenceStore<T>, R> PreferenceStoreSingleton<T>.invoke(
+  block: T.() -> R
+): R = instance().block()

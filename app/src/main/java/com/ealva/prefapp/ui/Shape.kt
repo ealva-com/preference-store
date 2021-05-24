@@ -15,24 +15,14 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Suppress("MagicNumber")
+package com.ealva.prefapp.ui
 
-package com.ealva.prefapp.ui.main
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Shapes
+import androidx.compose.ui.unit.dp
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import com.ealva.prefapp.ui.PreferenceStoreAppTheme
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-
-class MainActivity : ComponentActivity() {
-  @OptIn(ExperimentalCoroutinesApi::class)
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContent {
-      PreferenceStoreAppTheme {
-        PreferenceStoreApp()
-      }
-    }
-  }
-}
+val shapes = Shapes(
+    small = RoundedCornerShape(4.dp),
+    medium = RoundedCornerShape(4.dp),
+    large = RoundedCornerShape(0.dp)
+)

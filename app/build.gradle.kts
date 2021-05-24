@@ -18,15 +18,15 @@
 plugins {
   id("com.android.application")
   kotlin("android")
-    id("kotlin-android")
+  id("kotlin-android")
 }
 
 android {
-  compileSdkVersion(Sdk.COMPILE_SDK_VERSION)
+  compileSdk = Sdk.COMPILE_SDK_VERSION
 
   defaultConfig {
-    minSdkVersion(Sdk.MIN_SDK_VERSION)
-    targetSdkVersion(Sdk.TARGET_SDK_VERSION)
+    minSdk = Sdk.MIN_SDK_VERSION
+    targetSdk = Sdk.TARGET_SDK_VERSION
 
     applicationId = AppCoordinates.APP_ID
     versionCode = AppCoordinates.APP_VERSION_CODE
@@ -34,20 +34,49 @@ android {
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     signingConfig = signingConfigs.getByName("debug")
   }
+
+  buildTypes {
+    debug {
+      isTestCoverageEnabled = false
+    }
+
+    release {
+      isMinifyEnabled = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+  }
+
+  buildFeatures {
+    // Enables Jetpack Compose for this module
+    compose = true
+  }
+
+  composeOptions {
+    kotlinCompilerExtensionVersion = "1.0.0-beta06"
+  }
+
   compileOptions {
     isCoreLibraryDesugaringEnabled = true
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
-  buildTypes {
-    getByName("release") {
-      isMinifyEnabled = true
-    }
-  }
 
   lint {
     isWarningsAsErrors = false
     isAbortOnError = false
+  }
+
+  testOptions {
+    unitTests.isIncludeAndroidResources = true
+  }
+
+  packagingOptions {
+    resources {
+      excludes += listOf(
+        "META-INF/AL2.0",
+        "META-INF/LGPL2.1"
+      )
+    }
   }
 
   kotlinOptions {
@@ -59,7 +88,8 @@ android {
     freeCompilerArgs = listOf(
       "-XXLanguage:+InlineClasses",
       "-Xinline-classes",
-      "-Xopt-in=kotlin.RequiresOptIn"
+      "-Xopt-in=kotlin.RequiresOptIn",
+      "-Xskip-prerelease-check"
     )
   }
 }
@@ -68,28 +98,26 @@ dependencies {
   coreLibraryDesugaring(ToolsLib.DESUGARING)
   implementation(kotlin("stdlib-jdk8"))
   implementation(project(":preference-store"))
-  implementation(SupportLibs.ANDROIDX_APPCOMPAT)
-  implementation(SupportLibs.ANDROIDX_CORE_KTX)
-  implementation(SupportLibs.ANDROIDX_DATASTORE_PREFERENCES)
-  implementation(SupportLibs.ANDROIDX_LIFECYCLE_RUNTIME_KTX)
+  implementation(project(":compose-preference"))
+  implementation(AndroidxLibs.APPCOMPAT)
+  implementation(AndroidxLibs.CORE_KTX)
+  implementation(AndroidxLibs.DATASTORE_PREFERENCES)
+  implementation(AndroidxLibs.LIFECYCLE_RUNTIME_KTX)
+
   implementation(ThirdParty.COROUTINE_CORE)
   implementation(ThirdParty.COROUTINE_ANDROID)
 
   implementation(ThirdParty.KOIN)
   implementation(ThirdParty.KOIN_ANDROID)
 
-  implementation("androidx.viewpager2:viewpager2:1.0.0")
-  implementation("androidx.activity:activity-ktx:1.2.2")
-  implementation("androidx.fragment:fragment-ktx:1.3.3")
-  implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
-  implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
-  implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
-  implementation("androidx.lifecycle:lifecycle-common-java8:2.3.1")
-  implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-  implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-  implementation("com.google.android.material:material:1.3.0")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
+  implementation(ComposeLibs.UI)
+  implementation(ComposeLibs.UI_TOOLING)
+  implementation(ComposeLibs.FOUNDATION)
+  implementation(ComposeLibs.MATERIAL)
+  implementation(AndroidxLibs.COMPOSE_NAVIGATION)
+
+  implementation(AndroidxLibs.ACTIVITY_COMPOSE)
+  implementation(AndroidxLibs.MATERIAL)
 
   testImplementation(TestingLib.JUNIT)
   testImplementation(AndroidTestingLib.ANDROIDX_TEST_CORE) {

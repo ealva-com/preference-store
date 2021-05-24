@@ -19,9 +19,12 @@ package com.ealva.prefstore.store
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ealva.prefstore.test.shared.CoroutineRule
+import com.ealva.prefstore.test.shared.expect
 import com.nhaarman.expect.expect
+import com.nhaarman.expect.fail
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -303,6 +306,52 @@ public class BasePreferenceStoreTest {
   }
 
   @Test
+  public fun testStringSetPref(): Unit = coroutineRule.runBlockingTest {
+    val aSet = setOf("A", "B", "C", "Dog")
+    val bSet = setOf("Eric", "Fred", "Cat", "Dog")
+    singleton {
+      edit { it[stringSetPref] = aSet }
+      expect(stringSetPref()).toContainAll(aSet)
+      stringSetPref(bSet)
+      expect(stringSetPref()).toContainAll(bSet)
+      stringSetPref.asFlow().take(1).firstOrNull()?.let { it ->
+        expect(it).toContainAll(bSet)
+      } ?: fail("Flow returned no Set<String>")
+    }
+  }
+
+  @Test
+  public fun testOptStringSetPref(): Unit = coroutineRule.runBlockingTest {
+    val aSet = setOf("A", "B", "C", "Dog")
+    val bSet = setOf("Eric", "Fred", "Cat", "Dog")
+    singleton {
+      expect(optStringSetPref()).toBeNull()
+      edit { it[optStringSetPref] = aSet }
+      expect(optStringSetPref()).toContainAll(aSet)
+      optStringSetPref(bSet)
+      expect(optStringSetPref()).toContainAll(bSet)
+      optStringSetPref.asFlow().take(1).firstOrNull()?.let { set ->
+        expect(set).toContainAll(bSet)
+      } ?: fail("Flow returned null instead of Set<String>")
+    }
+  }
+
+  @Test
+  public fun testEnumSetSetPref(): Unit = coroutineRule.runBlockingTest {
+    val aSet = setOf(TestEnum.One, TestEnum.Two)
+    val bSet = setOf(TestEnum.Two, TestEnum.Three)
+    singleton {
+      edit { it[enumSet] = aSet }
+      expect(enumSet()).toContainAll(aSet)
+      enumSet(bSet)
+      expect(enumSet()).toContainAll(bSet)
+      enumSet.asFlow().take(1).firstOrNull()?.let { it ->
+        expect(it).toContainAll(bSet)
+      } ?: fail("Flow returned no Set<TestEnum>")
+    }
+  }
+
+  @Test
   public fun testPrefStoreReset(): Unit = coroutineRule.runBlockingTest {
     singleton {
       edit {
@@ -422,6 +471,9 @@ private interface TestPrefs : PreferenceStore<TestPrefs> {
   val optDoublePref: OptDoublePref
   val enumPref: PreferenceStore.Preference<String, TestEnum>
   val optEnumPref: PreferenceStore.Preference<String?, TestEnum?>
+  val stringSetPref: StringSetPref
+  val optStringSetPref: OptStringSetPref
+  val enumSet: PreferenceStore.Preference<Set<String>, Set<TestEnum>>
 
   companion object {
     fun make(storage: Storage): TestPrefs = TestPrefsImpl(storage)
@@ -443,6 +495,9 @@ private class TestPrefsImpl(storage: Storage) : BasePreferenceStore<TestPrefs>(s
   override val optDoublePref by optPreference<Double>()
   override val enumPref by enumByNamePref(TestEnum.Unknown)
   override val optEnumPref by optEnumByNamePref<TestEnum>()
+  override val stringSetPref: StringSetPref by preference(emptySet())
+  override val optStringSetPref by optPreference<Set<String>>()
+  override val enumSet by enumSetByNamePref(setOf(TestEnum.Unknown))
 }
 
 private class OtherPrefs(storage: Storage) : BasePreferenceStore<OtherPrefs>(storage) {

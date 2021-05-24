@@ -21,46 +21,42 @@ object Sdk {
   const val COMPILE_SDK_VERSION = 30
 }
 
-object Versions {
-  const val ANDROIDX_TEST = "1.4.0-alpha04"
-  const val ANDROIDX_TEST_EXT = "1.1.3-alpha04"
-  const val APPCOMPAT = "1.2.0"
-  const val CORE_KTX = "1.3.2"
-  const val COROUTINES = "1.4.3"
-  const val COROUTINES_TEST = "1.4.3"
-  const val DATASTORE = "1.0.0-beta01"
-  const val DESUGAR = "1.0.10"
-  const val EXPECT = "1.0.1"
-  const val JUNIT = "4.13.2"
-  const val KOIN = "2.2.2"
-  const val KOTLIN = "1.4.32"
-  const val LIFECYCLE = "2.2.0"
-}
-
-object BuildPluginsVersion {
-  const val AGP = "7.0.0-alpha14"
-  const val DETEKT = "1.16.0"
-  const val DOKKA = "1.4.30"
-  const val KOTLIN = "1.4.32"
-  const val VANNIKTECH_PUBLISH = "0.14.2"
-  const val VERSIONS = "0.33.0"
-}
-
-object SupportLibs {
-  const val ANDROIDX_APPCOMPAT = "androidx.appcompat:appcompat:${Versions.APPCOMPAT}"
-  const val ANDROIDX_CORE_KTX = "androidx.core:core-ktx:${Versions.CORE_KTX}"
-  const val ANDROIDX_DATASTORE_PREFERENCES =
+object AndroidxLibs {
+  const val ACTIVITY_COMPOSE = "androidx.activity:activity-compose:${Versions.ACTIVITY_COMPOSE}"
+  const val APPCOMPAT = "androidx.appcompat:appcompat:${Versions.APPCOMPAT}"
+  const val CORE_KTX = "androidx.core:core-ktx:${Versions.CORE_KTX}"
+  const val DATASTORE_PREFERENCES =
     "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
-  const val ANDROIDX_LIFECYCLE_RUNTIME_KTX =
+  const val LIFECYCLE_RUNTIME_KTX =
     "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.LIFECYCLE}"
+  const val CONSTRAINT_COMPOSE =
+    "androidx.constraintlayout:constraintlayout-compose:${Versions.CONSTRAINT_COMPOSE}"
+  const val COMPOSE_NAVIGATION =
+    "androidx.navigation:navigation-compose:${Versions.COMPOSE_NAVIGATION}"
+  const val MATERIAL = "com.google.android.material:material:${Versions.MATERIAL}"
+  const val VIEWMODEL_COMPOSE =
+    "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.VIEWMODEL_COMPOSE}"
+}
+
+object ComposeLibs {
+  const val UI = "androidx.compose.ui:ui:${Versions.COMPOSE}"
+  const val UI_TOOLING = "androidx.compose.ui:ui-tooling:${Versions.COMPOSE}"
+  const val FOUNDATION = "androidx.compose.foundation:foundation:${Versions.COMPOSE}"
+  const val MATERIAL = "androidx.compose.material:material:${Versions.COMPOSE}"
+  const val MATERIAL_ICONS =
+    "androidx.compose.material:material-icons-core:${Versions.COMPOSE}"
+  const val MATERIAL_ICONS_EXT =
+    "androidx.compose.material:material-icons-extended:${Versions.COMPOSE}"
+  const val RUNTIME_LIVEDATA =
+    "androidx.compose.runtime:runtime-livedata:${Versions.COMPOSE}"
 }
 
 object ThirdParty {
   const val COROUTINE_ANDROID =
     "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINES}"
   const val COROUTINE_CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.COROUTINES}"
-  const val KOIN = "org.koin:koin-core:${Versions.KOIN}"
-  const val KOIN_ANDROID = "org.koin:koin-android:${Versions.KOIN}"
+  const val KOIN = "io.insert-koin:koin-core:${Versions.KOIN}"
+  const val KOIN_ANDROID = "io.insert-koin:koin-android:${Versions.KOIN}"
 }
 
 object TestingLib {
@@ -79,4 +75,35 @@ object AndroidTestingLib {
 
 object ToolsLib {
   const val DESUGARING = "com.android.tools:desugar_jdk_libs:${Versions.DESUGAR}"
+}
+
+object BuildPluginsVersion {
+  const val AGP = "7.0.0-beta01"
+  const val DETEKT = "1.17.0"
+  const val DOKKA = "1.4.32"
+  const val KOTLIN = "1.4.32"
+  const val VANNIKTECH_PUBLISH = "0.15.1"
+  const val VERSIONS = "0.38.0"
+}
+
+object Versions {
+  const val ACTIVITY_COMPOSE = "1.3.0-alpha07"
+  const val ANDROIDX_TEST = "1.4.0-alpha04"
+  const val ANDROIDX_TEST_EXT = "1.1.3-alpha04"
+  const val APPCOMPAT = "1.3.0"
+  const val COMPOSE = "1.0.0-beta06"
+  const val COMPOSE_NAVIGATION = "1.0.0-alpha10"
+  const val CONSTRAINT_COMPOSE = "1.0.0-alpha06"
+  const val CORE_KTX = "1.5.0"
+  const val COROUTINES = "1.5.0"
+  const val COROUTINES_TEST = "1.5.0"
+  const val DATASTORE = "1.0.0-beta01"
+  const val DESUGAR = "1.0.10"
+  const val EXPECT = "1.0.1"
+  const val JUNIT = "4.13.2"
+  const val KOIN = "3.0.2"
+  const val KOTLIN = "1.4.32"
+  const val LIFECYCLE = "2.4.0-alpha01"
+  const val MATERIAL = "1.3.0"
+  const val VIEWMODEL_COMPOSE = "1.0.0-alpha04"
 }

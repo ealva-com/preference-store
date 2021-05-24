@@ -79,4 +79,3 @@ private class DataStoreStorage(
 
   override fun toString(): String = lastPreferences.toString()
 }
-

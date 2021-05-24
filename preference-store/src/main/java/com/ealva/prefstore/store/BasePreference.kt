@@ -27,11 +27,13 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 /**
- * BasePreference provides necessary functionality for [PreferenceStore.Preference] implementation
+ * BasePreference provides necessary functionality for [PreferenceStore.Preference] implementation,
  * except for mapping from stored value to actual and vice versa.
  *
- * All preferences in a PreferenceStore need to be unique by Key, so equals and hashCode are
- * implemented in this class and accept subclasses. Subclasses need not implement these methods.
+ * A Preference is equal to another preference if they have the same key and are in the same
+ * PreferenceStore. All preferences in a PreferenceStore need to be unique by Key, so equals and
+ * hashCode are implemented in this class and accept subclasses. Subclasses need not implement these
+ * methods. Equality of a preference has nothing to do with the current value of the preference.
  */
 public abstract class BasePreference<S, A, T : PreferenceStore<T>>(
   private val theClass: KClass<*>,
@@ -69,7 +71,7 @@ public abstract class BasePreference<S, A, T : PreferenceStore<T>>(
 
   protected abstract fun doActualToStored(actual: A): S
 
-  override fun asFlow(): Flow<A> = store.data
+  override fun asFlow(): Flow<A> = store.prefsFlow
     .catch { ex -> if (ex is IOException) emit(emptyPreferences()) else throw ex }
     .map { preferences -> preferences[key] }
     .map { stored -> storedToActual(stored) }
@@ -84,7 +86,7 @@ public abstract class BasePreference<S, A, T : PreferenceStore<T>>(
     }
   }
 
-  /** To be equal requires the same key and in the same store */
+  /** To be equal requires the same key and in the same store, nothing more or less/ */
   override fun equals(other: Any?): Boolean = when {
     this === other -> true
     other !is BasePreference<*, *, *> -> false
@@ -127,6 +129,8 @@ public typealias DoublePref = PreferenceStore.Preference<Double, Double>
 public typealias OptDoublePref = PreferenceStore.Preference<Double?, Double?>
 public typealias StringPref = PreferenceStore.Preference<String, String>
 public typealias OptStringPref = PreferenceStore.Preference<String?, String?>
+public typealias StringSetPref = PreferenceStore.Preference<Set<String>, Set<String>>
+public typealias OptStringSetPref = PreferenceStore.Preference<Set<String>?, Set<String>?>
 
 public class MappedPreference<S, A, T : PreferenceStore<T>>(
   theClass: KClass<*>,

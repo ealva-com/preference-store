@@ -17,4 +17,16 @@
 
 <resources>
   <string name="app_name">Preference Store</string>
+  <string name="CrossFadeLength">Cross Fade Length</string>
+  <string name="MultipleSelectSetting">Multiple Select Setting</string>
+  <string name="Group">Group</string>
+  <string name="DuckVolume">Duck Volume</string>
+  <string name="DuckAction">Duck Action</string>
+  <string name="EnableGroup">Enable Group</string>
+  <string name="AutoDownload">Auto Download</string>
+  <string name="CrossFadeLengthSummary">Volume fade between songs</string>
+  <string name="DuckVolumeSummary">Set volume to this when ducking</string>
+  <string name="AutomaticallyDownload">Automatically download artwork</string>
+  <string name="UseRemote">Use remote artwork</string>
+  <string name="EnableGroupSummary">Enable group of settings</string>
 </resources>

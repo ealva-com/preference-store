@@ -15,24 +15,27 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Suppress("MagicNumber")
-
 package com.ealva.prefapp.ui.main
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import com.ealva.prefapp.ui.PreferenceStoreAppTheme
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
+import com.ealva.prefapp.ui.main.Destinations.AppSettings
+import com.ealva.prefapp.ui.main.Destinations.SimpleSettings
 
-class MainActivity : ComponentActivity() {
-  @OptIn(ExperimentalCoroutinesApi::class)
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContent {
-      PreferenceStoreAppTheme {
-        PreferenceStoreApp()
-      }
-    }
+object Destinations {
+  const val Home = "home"
+  const val AppSettings = "appSettings"
+  const val SimpleSettings = "simpleSettings"
+}
+
+class Actions(navController: NavController) {
+  val appSettings: () -> Unit = {
+    navController.navigate(AppSettings) { launchSingleTop = true }
+  }
+  val simpleSettings: () -> Unit = {
+    navController.navigate(SimpleSettings)
+  }
+  val navigateUp: () -> Unit = {
+    navController.popBackStack()
   }
 }

@@ -16,6 +16,7 @@
  */
 
 include(":preference-store")
+include(":compose-preference")
 include(":app")
 
 pluginManagement {

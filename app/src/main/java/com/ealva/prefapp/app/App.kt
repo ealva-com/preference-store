@@ -35,7 +35,7 @@ class App : Application() {
 //    setupLogging()
 
     startKoin {
-      androidLogger(level = Level.INFO)
+      androidLogger(Level.NONE)
       androidContext(androidContext = this@App)
 
       modules(

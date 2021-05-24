@@ -15,24 +15,24 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Suppress("MagicNumber")
+package com.ealva.comppref.pref
 
-package com.ealva.prefapp.ui.main
-
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import com.ealva.prefapp.ui.PreferenceStoreAppTheme
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.Composable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class MainActivity : ComponentActivity() {
-  @OptIn(ExperimentalCoroutinesApi::class)
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContent {
-      PreferenceStoreAppTheme {
-        PreferenceStoreApp()
-      }
-    }
-  }
+@OptIn(ExperimentalMaterialApi::class)
+@ExperimentalCoroutinesApi
+@Composable
+public fun CallbackSetting(item: CallbackSettingItem) {
+  val isEnabled = GroupEnabledStatus.current && item.enabled
+
+  Setting(
+    title = item.title,
+    summary = item.summary,
+    singleLineTitle = true,
+    icon = item.icon,
+    enabled = isEnabled,
+    onClick = item.onClick
+  )
 }
