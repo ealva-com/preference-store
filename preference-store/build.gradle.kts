@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
-version = PreferenceStoreCoordinates.LIBRARY_VERSION
+version = PrefStoreVersion.VERSION
 
 plugins {
   id("com.android.library")
@@ -24,13 +24,13 @@ plugins {
 }
 
 android {
-  compileSdk = Sdk.COMPILE_SDK_VERSION
+  compileSdk = SdkVersion.COMPILE
 
   defaultConfig {
-    minSdk = Sdk.MIN_SDK_VERSION
-    targetSdk = Sdk.TARGET_SDK_VERSION
+    minSdk = SdkVersion.MIN
+    targetSdk = SdkVersion.TARGET
 
-    version = PreferenceStoreCoordinates.LIBRARY_VERSION
+    version = PrefStoreVersion.VERSION
 
 //    versionCode = PreferenceStoreCoordinates.LIBRARY_VERSION_CODE
 //    versionName = PreferenceStoreCoordinates.LIBRARY_VERSION
@@ -96,31 +96,32 @@ android {
 }
 
 dependencies {
-  coreLibraryDesugaring(ToolsLib.DESUGARING)
+  coreLibraryDesugaring(Libs.DESUGAR)
   implementation(kotlin("stdlib-jdk8"))
-  implementation(AndroidxLibs.APPCOMPAT)
-  implementation(AndroidxLibs.CORE_KTX)
-  implementation(AndroidxLibs.DATASTORE_PREFERENCES)
-  implementation(ThirdParty.COROUTINE_CORE)
-  implementation(ThirdParty.COROUTINE_ANDROID)
+  implementation(Libs.AndroidX.APPCOMPAT)
+  implementation(Libs.AndroidX.Ktx.CORE)
+  implementation(Libs.Datastore.PREFERENCES)
 
-  testImplementation(TestingLib.JUNIT)
-  testImplementation(AndroidTestingLib.ANDROIDX_TEST_CORE) {
-    exclude("junit", "junit")
-  }
-  testImplementation(AndroidTestingLib.ANDROIDX_TEST_RULES) {
-    exclude("junit", "junit")
-  }
-  testImplementation(TestingLib.EXPECT)
-  testImplementation(TestingLib.COROUTINE_TEST)
+  implementation(Libs.Coroutines.CORE)
+  implementation(Libs.Coroutines.ANDROID)
 
-  androidTestImplementation(AndroidTestingLib.ANDROIDX_TEST_RUNNER) {
+  testImplementation(Libs.JUnit.JUNIT)
+  testImplementation(Libs.AndroidX.Test.CORE) {
     exclude("junit", "junit")
   }
-  androidTestImplementation(AndroidTestingLib.ANDROIDX_TEST_EXT_JUNIT) {
+  testImplementation(Libs.AndroidX.Test.RULES) {
     exclude("junit", "junit")
   }
-  androidTestImplementation(TestingLib.JUNIT)
-  androidTestImplementation(TestingLib.EXPECT)
-  androidTestImplementation(TestingLib.COROUTINE_TEST)
+  testImplementation(Libs.Expect.EXPECT)
+  testImplementation(Libs.Coroutines.TEST)
+
+  androidTestImplementation(Libs.AndroidX.Test.RUNNER) {
+    exclude("junit", "junit")
+  }
+  androidTestImplementation(Libs.AndroidX.Test.Ext.JUNIT) {
+    exclude("junit", "junit")
+  }
+  androidTestImplementation(Libs.JUnit.JUNIT)
+  androidTestImplementation(Libs.Expect.EXPECT)
+  androidTestImplementation(Libs.Coroutines.TEST)
 }

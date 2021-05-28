@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 @Composable
 public fun CheckboxSetting(item: CheckboxSettingItem) {
   val scope = rememberCoroutineScope()
-  val isEnabled = GroupEnabledStatus.current && item.enabled
+  val isEnabled = LocalGroupEnabledStatus.current && item.enabled
   val onClicked: (Boolean) -> Unit = { scope.launch { item.preference(it) } }
 
   Setting(

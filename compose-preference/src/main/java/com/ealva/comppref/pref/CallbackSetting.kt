@@ -25,7 +25,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 @Composable
 public fun CallbackSetting(item: CallbackSettingItem) {
-  val isEnabled = GroupEnabledStatus.current && item.enabled
+  val isEnabled = LocalGroupEnabledStatus.current && item.enabled
 
   Setting(
     title = item.title,

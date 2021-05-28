@@ -15,33 +15,37 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-object AppCoordinates {
-  const val APP_ID = "com.ealva.prefstore"
+object AppVersion {
+  const val ID = "com.ealva.prefstore"
 
-  const val APP_VERSION_NAME = "1.0.0"
-  const val APP_VERSION_CODE = 1
+  const val VERSION_NAME = "1.0.0"
+  const val VERSION_CODE = 1
 }
 
-object PreferenceStoreCoordinates {
+private const val IS_SNAPSHOT = false
+
+object PrefStoreVersion {
   // All parts of versioning can be up to 2 digits: 0-99
-  private const val versionMajor = 0
-  private const val versionMinor = 7
-  private const val versionPatch = 1
-  private const val versionBuild = 0
+  private const val MAJOR = 0
+  private const val MINOR = 7
+  private const val PATCH = 4
+  private const val BUILD = 0
 
-  const val LIBRARY_VERSION_CODE = versionMajor * 1000000 + versionMinor * 10000 +
-    versionPatch * 100 + versionBuild
-  const val LIBRARY_VERSION = "$versionMajor.$versionMinor.$versionPatch-SNAPSHOT"
+  const val VERSION_CODE = MAJOR * 1000000 + MINOR * 10000 + PATCH * 100 + BUILD
+  val VERSION = "$MAJOR.$MINOR.$PATCH-${buildPart(IS_SNAPSHOT, BUILD)}"
 }
 
-object ComposePreferenceCoordinates {
+object ComposePrefVersion {
   // All parts of versioning can be up to 2 digits: 0-99
-  private const val versionMajor = 0
-  private const val versionMinor = 7
-  private const val versionPatch = 1
-  private const val versionBuild = 0
+  private const val MAJOR = 0
+  private const val MINOR = 7
+  private const val PATCH = 4
+  private const val BUILD = 0
 
-  const val LIBRARY_VERSION_CODE = versionMajor * 1000000 + versionMinor * 10000 +
-    versionPatch * 100 + versionBuild
-  const val LIBRARY_VERSION = "$versionMajor.$versionMinor.$versionPatch-SNAPSHOT"
+  const val VERSION_CODE = MAJOR * 1000000 + MINOR * 10000 + PATCH * 100 + BUILD
+  val VERSION = "$MAJOR.$MINOR.$PATCH-${buildPart(IS_SNAPSHOT, BUILD)}"
 }
+
+@Suppress("SameParameterValue")
+private fun buildPart(isSnapshot: Boolean, build: Int): String =
+  if (isSnapshot) "SNAPSHOT" else build.toString()

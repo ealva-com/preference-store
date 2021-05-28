@@ -25,14 +25,12 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -62,7 +60,6 @@ fun SimpleSettings(
   val settingsState: MutableState<List<SettingItem>> = remember {
     mutableStateOf(listOf())
   }
-  val resources = LocalContext.current.resources
   LaunchedEffect(settingsState) {
     scope.launch {
       prefsSingleton
@@ -75,8 +72,8 @@ fun SimpleSettings(
   Scaffold(
     topBar = {
       TopAppBar(
-        backgroundColor = AppColors.primarySurface,
-        contentColor = contentColorFor(AppColors.primarySurface),
+        backgroundColor = AppColors.primary,
+        contentColor = contentColorFor(AppColors.primary),
         elevation = 0.dp,
         navigationIcon = {
           IconButton(onClick = navigateUp) {

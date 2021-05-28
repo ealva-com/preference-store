@@ -22,15 +22,15 @@ plugins {
 }
 
 android {
-  compileSdk = Sdk.COMPILE_SDK_VERSION
+  compileSdk = SdkVersion.COMPILE
 
   defaultConfig {
-    minSdk = Sdk.MIN_SDK_VERSION
-    targetSdk = Sdk.TARGET_SDK_VERSION
+    minSdk = SdkVersion.MIN
+    targetSdk = SdkVersion.TARGET
 
-    applicationId = AppCoordinates.APP_ID
-    versionCode = AppCoordinates.APP_VERSION_CODE
-    versionName = AppCoordinates.APP_VERSION_NAME
+    applicationId = AppVersion.ID
+    versionCode = AppVersion.VERSION_CODE
+    versionName = AppVersion.VERSION_NAME
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     signingConfig = signingConfigs.getByName("debug")
   }
@@ -52,7 +52,7 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = "1.0.0-beta06"
+    kotlinCompilerExtensionVersion = "1.0.0-beta07"
   }
 
   compileOptions {
@@ -95,47 +95,46 @@ android {
 }
 
 dependencies {
-  coreLibraryDesugaring(ToolsLib.DESUGARING)
+  coreLibraryDesugaring(Libs.DESUGAR)
   implementation(kotlin("stdlib-jdk8"))
   implementation(project(":preference-store"))
   implementation(project(":compose-preference"))
-  implementation(AndroidxLibs.APPCOMPAT)
-  implementation(AndroidxLibs.CORE_KTX)
-  implementation(AndroidxLibs.DATASTORE_PREFERENCES)
-  implementation(AndroidxLibs.LIFECYCLE_RUNTIME_KTX)
+  implementation(Libs.AndroidX.APPCOMPAT)
+  implementation(Libs.AndroidX.Ktx.CORE)
+  implementation(Libs.Datastore.PREFERENCES)
+  implementation(Libs.AndroidX.Lifecycle.RUNTIME_KTX)
 
-  implementation(ThirdParty.COROUTINE_CORE)
-  implementation(ThirdParty.COROUTINE_ANDROID)
+  implementation(Libs.Coroutines.CORE)
+  implementation(Libs.Coroutines.ANDROID)
 
-  implementation(ThirdParty.KOIN)
-  implementation(ThirdParty.KOIN_ANDROID)
+  implementation(Libs.Koin.CORE)
+  implementation(Libs.Koin.ANDROID)
 
-  implementation(ComposeLibs.UI)
-  implementation(ComposeLibs.UI_TOOLING)
-  implementation(ComposeLibs.FOUNDATION)
-  implementation(ComposeLibs.MATERIAL)
-  implementation(AndroidxLibs.COMPOSE_NAVIGATION)
+  implementation(Libs.AndroidX.Compose.UI)
+  implementation(Libs.AndroidX.Compose.TOOLING)
+  implementation(Libs.AndroidX.Compose.FOUNDATION)
+  implementation(Libs.AndroidX.Compose.MATERIAL)
+  implementation(Libs.Navigation.COMPOSE)
 
-  implementation(AndroidxLibs.ACTIVITY_COMPOSE)
-  implementation(AndroidxLibs.MATERIAL)
+  implementation(Libs.AndroidX.Activity.ACTIVITY_COMPOSE)
+  implementation("com.google.android.material:material:1.3.0")
 
-  testImplementation(TestingLib.JUNIT)
-  testImplementation(AndroidTestingLib.ANDROIDX_TEST_CORE) {
+  testImplementation(Libs.JUnit.JUNIT)
+  testImplementation(Libs.AndroidX.Test.CORE) {
     exclude("junit", "junit")
   }
-  testImplementation(AndroidTestingLib.ANDROIDX_TEST_RULES) {
+  testImplementation(Libs.AndroidX.Test.RULES) {
     exclude("junit", "junit")
   }
-  testImplementation(TestingLib.EXPECT)
+  testImplementation(Libs.Expect.EXPECT)
 
-  androidTestImplementation(AndroidTestingLib.ANDROIDX_TEST_EXT_JUNIT) {
+  androidTestImplementation(Libs.AndroidX.Test.Ext.JUNIT) {
     exclude("junit", "junit")
   }
-  androidTestImplementation(AndroidTestingLib.ANDROIDX_TEST_RUNNER) {
+  androidTestImplementation(Libs.AndroidX.Test.RUNNER) {
     exclude("junit", "junit")
   }
-  androidTestImplementation(TestingLib.JUNIT)
-  androidTestImplementation(TestingLib.EXPECT)
-  androidTestImplementation(TestingLib.COROUTINE_TEST)
-
+  androidTestImplementation(Libs.JUnit.JUNIT)
+  androidTestImplementation(Libs.Expect.EXPECT)
+  androidTestImplementation(Libs.Coroutines.TEST)
 }

@@ -15,95 +15,112 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-object Sdk {
-  const val MIN_SDK_VERSION = 21
-  const val TARGET_SDK_VERSION = 30
-  const val COMPILE_SDK_VERSION = 30
+object SdkVersion {
+  const val COMPILE = 30
+  const val MIN = 21
+  const val TARGET = 30
 }
 
-object AndroidxLibs {
-  const val ACTIVITY_COMPOSE = "androidx.activity:activity-compose:${Versions.ACTIVITY_COMPOSE}"
-  const val APPCOMPAT = "androidx.appcompat:appcompat:${Versions.APPCOMPAT}"
-  const val CORE_KTX = "androidx.core:core-ktx:${Versions.CORE_KTX}"
-  const val DATASTORE_PREFERENCES =
-    "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
-  const val LIFECYCLE_RUNTIME_KTX =
-    "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.LIFECYCLE}"
-  const val CONSTRAINT_COMPOSE =
-    "androidx.constraintlayout:constraintlayout-compose:${Versions.CONSTRAINT_COMPOSE}"
-  const val COMPOSE_NAVIGATION =
-    "androidx.navigation:navigation-compose:${Versions.COMPOSE_NAVIGATION}"
-  const val MATERIAL = "com.google.android.material:material:${Versions.MATERIAL}"
-  const val VIEWMODEL_COMPOSE =
-    "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.VIEWMODEL_COMPOSE}"
-}
-
-object ComposeLibs {
-  const val UI = "androidx.compose.ui:ui:${Versions.COMPOSE}"
-  const val UI_TOOLING = "androidx.compose.ui:ui-tooling:${Versions.COMPOSE}"
-  const val FOUNDATION = "androidx.compose.foundation:foundation:${Versions.COMPOSE}"
-  const val MATERIAL = "androidx.compose.material:material:${Versions.COMPOSE}"
-  const val MATERIAL_ICONS =
-    "androidx.compose.material:material-icons-core:${Versions.COMPOSE}"
-  const val MATERIAL_ICONS_EXT =
-    "androidx.compose.material:material-icons-extended:${Versions.COMPOSE}"
-  const val RUNTIME_LIVEDATA =
-    "androidx.compose.runtime:runtime-livedata:${Versions.COMPOSE}"
-}
-
-object ThirdParty {
-  const val COROUTINE_ANDROID =
-    "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINES}"
-  const val COROUTINE_CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.COROUTINES}"
-  const val KOIN = "io.insert-koin:koin-core:${Versions.KOIN}"
-  const val KOIN_ANDROID = "io.insert-koin:koin-android:${Versions.KOIN}"
-}
-
-object TestingLib {
-  const val COROUTINE_TEST =
-    "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.COROUTINES_TEST}"
-  const val EXPECT = "com.nhaarman:expect.kt:${Versions.EXPECT}"
-  const val JUNIT = "junit:junit:${Versions.JUNIT}"
-}
-
-object AndroidTestingLib {
-  const val ANDROIDX_TEST_CORE = "androidx.test:core:${Versions.ANDROIDX_TEST}"
-  const val ANDROIDX_TEST_EXT_JUNIT = "androidx.test.ext:junit:${Versions.ANDROIDX_TEST_EXT}"
-  const val ANDROIDX_TEST_RULES = "androidx.test:rules:${Versions.ANDROIDX_TEST}"
-  const val ANDROIDX_TEST_RUNNER = "androidx.test:runner:${Versions.ANDROIDX_TEST}"
-}
-
-object ToolsLib {
-  const val DESUGARING = "com.android.tools:desugar_jdk_libs:${Versions.DESUGAR}"
-}
-
-object BuildPluginsVersion {
-  const val AGP = "7.0.0-beta01"
-  const val DETEKT = "1.17.0"
+object PluginsVersion {
+  const val AGP = "7.0.0-beta02"
+  const val DETEKT = "1.17.1"
   const val DOKKA = "1.4.32"
   const val KOTLIN = "1.4.32"
-  const val VANNIKTECH_PUBLISH = "0.15.1"
-  const val VERSIONS = "0.38.0"
+  const val PUBLISH = "0.15.1"
+  const val VERSIONS = "0.39.0"
 }
 
-object Versions {
-  const val ACTIVITY_COMPOSE = "1.3.0-alpha07"
-  const val ANDROIDX_TEST = "1.4.0-alpha04"
-  const val ANDROIDX_TEST_EXT = "1.1.3-alpha04"
-  const val APPCOMPAT = "1.3.0"
-  const val COMPOSE = "1.0.0-beta06"
-  const val COMPOSE_NAVIGATION = "1.0.0-alpha10"
-  const val CONSTRAINT_COMPOSE = "1.0.0-alpha06"
-  const val CORE_KTX = "1.5.0"
-  const val COROUTINES = "1.5.0"
-  const val COROUTINES_TEST = "1.5.0"
-  const val DATASTORE = "1.0.0-beta01"
-  const val DESUGAR = "1.0.10"
-  const val EXPECT = "1.0.1"
-  const val JUNIT = "4.13.2"
-  const val KOIN = "3.0.2"
-  const val KOTLIN = "1.4.32"
-  const val LIFECYCLE = "2.4.0-alpha01"
-  const val MATERIAL = "1.3.0"
-  const val VIEWMODEL_COMPOSE = "1.0.0-alpha04"
+object Libs {
+  const val AGP = "com.android.tools.build:gradle:${PluginsVersion.AGP}"
+  const val DESUGAR = "com.android.tools:desugar_jdk_libs:1.1.5"
+
+  object Kotlin {
+    private const val VERSION = "1.4.32"
+    const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$VERSION"
+
+    // const val STDLIB = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$VERSION"
+    // const val EXTENSIONS = "org.jetbrains.kotlin:kotlin-android-extensions:$VERSION"
+  }
+
+  object Coroutines {
+    private const val VERSION = "1.4.2"
+    const val CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$VERSION"
+    const val ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$VERSION"
+    const val TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$VERSION"
+  }
+
+  object Koin {
+    private const val VERSION = "3.0.2"
+    const val CORE = "io.insert-koin:koin-core:$VERSION"
+    const val ANDROID = "io.insert-koin:koin-android:$VERSION"
+  }
+
+  object JUnit {
+    private const val VERSION = "4.13.2"
+    const val JUNIT = "junit:junit:$VERSION"
+  }
+
+  object AndroidX {
+    const val APPCOMPAT = "androidx.appcompat:appcompat:1.3.0"
+    const val PALETTE = "androidx.palette:palette:1.0.0"
+
+    object Ktx {
+      const val CORE = "androidx.core:core-ktx:1.6.0-alpha03"
+    }
+
+    object Activity {
+      const val ACTIVITY_COMPOSE = "androidx.activity:activity-compose:1.3.0-alpha08"
+    }
+
+    object Constraint {
+      const val LAYOUT_COMPOSE = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha07"
+    }
+
+    object Compose {
+      private const val VERSION = "1.0.0-beta07"
+      const val FOUNDATION = "androidx.compose.foundation:foundation:$VERSION"
+      const val UI = "androidx.compose.ui:ui:$VERSION"
+      const val MATERIAL = "androidx.compose.material:material:$VERSION"
+      const val TOOLING = "androidx.compose.ui:ui-tooling:$VERSION"
+
+//      const val RUNTIME = "androidx.compose.runtime:runtime:$VERSION"
+//      const val LAYOUT = "androidx.compose.foundation:foundation-layout:${VERSION}"
+//      const val MATERIAL_ICONS_EXTENDED =
+//        "androidx.compose.material:material-icons-extended:${VERSION}"
+    }
+
+    object Lifecycle {
+      private const val VERSION = "2.3.1"
+      const val RUNTIME_KTX = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01"
+
+//    const val VIEW_MODEL_COMPOSE = "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha05"
+//    const val VIEW_MODEL_KTX = "androidx.lifecycle:lifecycle-viewmodel-ktx:$VERSION"
+    }
+
+    object Test {
+      private const val VERSION = "1.4.0-alpha04"
+      const val CORE = "androidx.test:core:$VERSION"
+      const val RULES = "androidx.test:rules:$VERSION"
+      const val RUNNER = "androidx.test:runner:$VERSION"
+
+      object Ext {
+        private const val VERSION = "1.1.3-alpha04"
+        const val JUNIT = "androidx.test.ext:junit-ktx:$VERSION"
+      }
+
+      // const val ESPRESSO_CORE = "androidx.test.espresso:espresso-core:3.2.0"
+    }
+  }
+
+  object Datastore {
+    const val PREFERENCES = "androidx.datastore:datastore-preferences:1.0.0-beta01"
+  }
+
+  object Expect {
+    const val EXPECT = "com.nhaarman:expect.kt:1.0.1"
+  }
+
+  object Navigation {
+    const val COMPOSE = "androidx.navigation:navigation-compose:2.4.0-alpha01"
+  }
 }

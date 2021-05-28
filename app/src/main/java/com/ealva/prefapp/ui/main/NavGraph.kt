@@ -18,7 +18,6 @@
 package com.ealva.prefapp.ui.main
 
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.ealva.prefapp.ui.main.Destinations.AppSettings
 import com.ealva.prefapp.ui.main.Destinations.SimpleSettings
 

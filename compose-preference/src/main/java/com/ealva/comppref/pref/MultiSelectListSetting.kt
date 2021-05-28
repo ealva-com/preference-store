@@ -34,7 +34,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -49,7 +48,7 @@ public fun <A : Any> MultiSelectListSetting(item: MultiSelectListSettingItem<A>)
   val selectedKeys = item.selectedKeys
   val dialogItems = item.dialogItems
   val summary = selectedKeys.joinToString(separator = ", ", limit = 3)
-  val isEnabled = GroupEnabledStatus.current && item.enabled
+  val isEnabled = LocalGroupEnabledStatus.current && item.enabled
 
   Setting(
     title = item.title,
@@ -75,9 +74,9 @@ public fun <A : Any> MultiSelectListSetting(item: MultiSelectListSettingItem<A>)
               }
               if (result.isNotEmpty()) {
                 scope.launch {
-                  item.preference.set(result.mapTo(mutableSetOf()) {
-                    requireNotNull(dialogItems[it])
-                  })
+                  item.preference.set(
+                    result.mapTo(mutableSetOf()) { requireNotNull(dialogItems[it]) }
+                  )
                 }
               }
             }

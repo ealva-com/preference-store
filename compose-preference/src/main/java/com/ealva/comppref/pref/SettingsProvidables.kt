@@ -21,6 +21,5 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.structuralEqualityPolicy
 
-public val GroupEnabledStatus: ProvidableCompositionLocal<Boolean> =
+public val LocalGroupEnabledStatus: ProvidableCompositionLocal<Boolean> =
   compositionLocalOf(structuralEqualityPolicy()) { true }
-

@@ -28,7 +28,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -47,7 +46,7 @@ public fun GroupSetting(item: GroupSettingItem, makers: SettingMakers) {
     elevation = 4.dp,
     modifier = Modifier.padding(8.dp)
   ) {
-    CompositionLocalProvider(GroupEnabledStatus provides item.enabled) {
+    CompositionLocalProvider(LocalGroupEnabledStatus provides item.enabled) {
       Column {
         item.content.forEach { groupItem ->
           makers.Make(groupItem)

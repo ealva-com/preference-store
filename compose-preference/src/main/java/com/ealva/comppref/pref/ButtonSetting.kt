@@ -27,7 +27,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 @Composable
 public fun ButtonSetting(item: ButtonSettingItem) {
-  val isEnabled = GroupEnabledStatus.current && item.enabled
+  val isEnabled = LocalGroupEnabledStatus.current && item.enabled
 
   // TODO Button is not vertically centered in list item
   Setting(

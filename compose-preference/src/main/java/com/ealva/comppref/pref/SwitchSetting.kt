@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 public fun SwitchSetting(item: SwitchSettingItem) {
   val scope = rememberCoroutineScope()
   val onClicked: (Boolean) -> Unit = { scope.launch { item.preference.set(it) } }
-  val isEnabled = GroupEnabledStatus.current && item.enabled
+  val isEnabled = LocalGroupEnabledStatus.current && item.enabled
 
   Setting(
     title = item.title,

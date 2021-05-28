@@ -35,14 +35,13 @@ import com.ealva.prefstore.store.invoke
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
-
 @ExperimentalMaterialApi
 @ExperimentalCoroutinesApi
 @Composable
 public fun <S, A : Comparable<A>> SliderSetting(item: SliderSettingItem<S, A>) {
   val scope = rememberCoroutineScope()
   val currentValue = remember { mutableStateOf(item.typeToFloat(item.value)) }
-  val isEnabled = GroupEnabledStatus.current && item.enabled
+  val isEnabled = LocalGroupEnabledStatus.current && item.enabled
 
   Setting(
     title = item.title,
