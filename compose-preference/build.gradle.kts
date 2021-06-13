@@ -32,9 +32,6 @@ android {
     targetSdk = SdkVersion.TARGET
     version = ComposePrefVersion.VERSION
 
-//    versionCode = ComposePreferenceCoordinates.LIBRARY_VERSION_CODE
-//    versionName = ComposePreferenceCoordinates.LIBRARY_VERSION
-
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles("consumer-rules.pro")
   }
@@ -56,7 +53,7 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = "1.0.0-beta07"
+    kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.VERSION
   }
 
   compileOptions {
@@ -90,10 +87,8 @@ android {
     suppressWarnings = false
     verbose = true
     freeCompilerArgs = listOf(
-      "-XXLanguage:+InlineClasses",
-      "-Xinline-classes",
-      "-Xopt-in=kotlin.RequiresOptIn",
-      "-Xexplicit-api=warning"
+      "-Xexplicit-api=warning",
+      "-Xopt-in=kotlin.RequiresOptIn"
     )
   }
 }

@@ -32,9 +32,6 @@ android {
 
     version = PrefStoreVersion.VERSION
 
-//    versionCode = PreferenceStoreCoordinates.LIBRARY_VERSION_CODE
-//    versionName = PreferenceStoreCoordinates.LIBRARY_VERSION
-
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles("consumer-rules.pro")
   }
@@ -87,9 +84,6 @@ android {
     suppressWarnings = false
     verbose = true
     freeCompilerArgs = listOf(
-      "-XXLanguage:+InlineClasses",
-      "-Xinline-classes",
-      "-Xopt-in=kotlin.RequiresOptIn",
       "-Xexplicit-api=warning"
     )
   }

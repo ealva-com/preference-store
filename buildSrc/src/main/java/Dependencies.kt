@@ -22,10 +22,10 @@ object SdkVersion {
 }
 
 object PluginsVersion {
-  const val AGP = "7.0.0-beta02"
+  const val AGP = "7.0.0-beta03"
   const val DETEKT = "1.17.1"
   const val DOKKA = "1.4.32"
-  const val KOTLIN = "1.4.32"
+  const val KOTLIN = "1.5.10"
   const val PUBLISH = "0.15.1"
   const val VERSIONS = "0.39.0"
 }
@@ -35,7 +35,7 @@ object Libs {
   const val DESUGAR = "com.android.tools:desugar_jdk_libs:1.1.5"
 
   object Kotlin {
-    private const val VERSION = "1.4.32"
+    private const val VERSION = "1.5.10"
     const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$VERSION"
 
     // const val STDLIB = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$VERSION"
@@ -43,14 +43,14 @@ object Libs {
   }
 
   object Coroutines {
-    private const val VERSION = "1.4.2"
+    private const val VERSION = "1.5.0"
     const val CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$VERSION"
     const val ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$VERSION"
     const val TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$VERSION"
   }
 
   object Koin {
-    private const val VERSION = "3.0.2"
+    private const val VERSION = "3.1.0"
     const val CORE = "io.insert-koin:koin-core:$VERSION"
     const val ANDROID = "io.insert-koin:koin-android:$VERSION"
   }
@@ -77,7 +77,7 @@ object Libs {
     }
 
     object Compose {
-      private const val VERSION = "1.0.0-beta07"
+      const val VERSION = "1.0.0-beta08"
       const val FOUNDATION = "androidx.compose.foundation:foundation:$VERSION"
       const val UI = "androidx.compose.ui:ui:$VERSION"
       const val MATERIAL = "androidx.compose.material:material:$VERSION"

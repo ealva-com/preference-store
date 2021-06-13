@@ -52,7 +52,7 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = "1.0.0-beta07"
+    kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.VERSION
   }
 
   compileOptions {
@@ -86,8 +86,6 @@ android {
     suppressWarnings = false
     verbose = true
     freeCompilerArgs = listOf(
-      "-XXLanguage:+InlineClasses",
-      "-Xinline-classes",
       "-Xopt-in=kotlin.RequiresOptIn",
       "-Xskip-prerelease-check"
     )

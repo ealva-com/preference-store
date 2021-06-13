@@ -53,7 +53,6 @@ public inline operator fun <T : PreferenceStore<T>> StoreHolder<T>.invoke(
   block: (T) -> Unit
 ): Unit = block(store)
 
-
 /**
  * PreferenceStore wraps a DataStore<Preference> and provides a higher level abstraction of a
  * [Preference], getting and setting values, flows of values for a [Preference], and mapping of
