@@ -116,7 +116,7 @@ public interface PreferenceStore<T : PreferenceStore<T>> {
    * be committed as one. This is more performant than calling individual [Preference.set]s as there
    * will be one commit (one write, one emit, etc.) when [block] exits.
    */
-  public suspend fun edit(block: T.(MutablePreferenceStore) -> Unit)
+  public suspend fun edit(block: suspend T.(MutablePreferenceStore) -> Unit)
 
   /**
    * Clear [prefs] or clear all if [prefs] is empty. Effectively sets them to their default value
@@ -153,7 +153,7 @@ public open class BasePreferenceStore<T : PreferenceStore<T>>(
     pref.storedToActual(storage[pref.key])
 
   @Suppress("UNCHECKED_CAST")
-  override suspend fun edit(block: T.(MutablePreferenceStore) -> Unit) {
+  override suspend fun edit(block: suspend T.(MutablePreferenceStore) -> Unit) {
     // Don't copy prefSet. Due to how delegated properties behave a particular preference
     // may not exist in the set until it's referenced inside the block()
     storage.edit { (this as T).block(MutableStore(prefSet, it)) }
