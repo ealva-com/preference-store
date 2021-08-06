@@ -218,7 +218,7 @@ public open class BasePreferenceStore<T : PreferenceStore<T>>(
     noinline sanitize: Sanitize<S?> = null
   ): StorePref<String?, S?> = optAsTypePref(
     default,
-    { name -> S::class.java.enumConstants.firstOrNull { it.name == name } },
+    { name -> S::class.java.enumConstants?.firstOrNull { it.name == name } },
     { it?.name },
     customName,
     sanitize

@@ -95,7 +95,7 @@ android {
 dependencies {
   coreLibraryDesugaring(Libs.DESUGAR)
   implementation(kotlin("stdlib-jdk8"))
-  implementation(project(":preference-store"))
+  implementation(project(":pref-store"))
   implementation(project(":compose-preference"))
   implementation(Libs.AndroidX.APPCOMPAT)
   implementation(Libs.AndroidX.Ktx.CORE)
@@ -115,7 +115,7 @@ dependencies {
   implementation(Libs.Navigation.COMPOSE)
 
   implementation(Libs.AndroidX.Activity.ACTIVITY_COMPOSE)
-  implementation("com.google.android.material:material:1.3.0")
+  implementation("com.google.android.material:material:1.4.0")
 
   testImplementation(Libs.JUnit.JUNIT)
   testImplementation(Libs.AndroidX.Test.CORE) {

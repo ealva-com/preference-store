@@ -22,11 +22,11 @@ object SdkVersion {
 }
 
 object PluginsVersion {
-  const val AGP = "7.0.0-beta03"
+  const val AGP = "7.0.0"
   const val DETEKT = "1.17.1"
-  const val DOKKA = "1.4.32"
-  const val KOTLIN = "1.5.10"
-  const val PUBLISH = "0.15.1"
+  const val DOKKA = "1.5.0"
+  const val KOTLIN = "1.5.21"
+  const val PUBLISH = "0.17.0"
   const val VERSIONS = "0.39.0"
 }
 
@@ -35,7 +35,7 @@ object Libs {
   const val DESUGAR = "com.android.tools:desugar_jdk_libs:1.1.5"
 
   object Kotlin {
-    private const val VERSION = "1.5.10"
+    private const val VERSION = "1.5.21"
     const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$VERSION"
 
     // const val STDLIB = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$VERSION"
@@ -43,14 +43,14 @@ object Libs {
   }
 
   object Coroutines {
-    private const val VERSION = "1.5.0"
+    private const val VERSION = "1.5.1"
     const val CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$VERSION"
     const val ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$VERSION"
     const val TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$VERSION"
   }
 
   object Koin {
-    private const val VERSION = "3.1.0"
+    private const val VERSION = "3.1.2"
     const val CORE = "io.insert-koin:koin-core:$VERSION"
     const val ANDROID = "io.insert-koin:koin-android:$VERSION"
   }
@@ -61,15 +61,15 @@ object Libs {
   }
 
   object AndroidX {
-    const val APPCOMPAT = "androidx.appcompat:appcompat:1.3.0"
+    const val APPCOMPAT = "androidx.appcompat:appcompat:1.3.1"
     const val PALETTE = "androidx.palette:palette:1.0.0"
 
     object Ktx {
-      const val CORE = "androidx.core:core-ktx:1.6.0-alpha03"
+      const val CORE = "androidx.core:core-ktx:1.6.0"
     }
 
     object Activity {
-      const val ACTIVITY_COMPOSE = "androidx.activity:activity-compose:1.3.0-alpha08"
+      const val ACTIVITY_COMPOSE = "androidx.activity:activity-compose:1.3.1"
     }
 
     object Constraint {
@@ -77,7 +77,8 @@ object Libs {
     }
 
     object Compose {
-      const val VERSION = "1.0.0-beta08"
+      @Suppress("MemberVisibilityCanBePrivate") // used in app build.gradle.kts
+      const val VERSION = "1.0.1"
       const val FOUNDATION = "androidx.compose.foundation:foundation:$VERSION"
       const val UI = "androidx.compose.ui:ui:$VERSION"
       const val MATERIAL = "androidx.compose.material:material:$VERSION"
@@ -98,13 +99,13 @@ object Libs {
     }
 
     object Test {
-      private const val VERSION = "1.4.0-alpha04"
+      private const val VERSION = "1.4.0"
       const val CORE = "androidx.test:core:$VERSION"
       const val RULES = "androidx.test:rules:$VERSION"
       const val RUNNER = "androidx.test:runner:$VERSION"
 
       object Ext {
-        private const val VERSION = "1.1.3-alpha04"
+        private const val VERSION = "1.1.3"
         const val JUNIT = "androidx.test.ext:junit-ktx:$VERSION"
       }
 
@@ -113,7 +114,7 @@ object Libs {
   }
 
   object Datastore {
-    const val PREFERENCES = "androidx.datastore:datastore-preferences:1.0.0-beta01"
+    const val PREFERENCES = "androidx.datastore:datastore-preferences:1.0.0"
   }
 
   object Expect {

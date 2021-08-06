@@ -15,7 +15,7 @@
  * PreferenceStore. If not, see <http://www.gnu.org/licenses/>.
  */
 
-include(":preference-store")
+include(":pref-store")
 include(":compose-preference")
 include(":app")
 

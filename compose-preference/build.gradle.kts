@@ -96,7 +96,7 @@ android {
 dependencies {
   coreLibraryDesugaring(Libs.DESUGAR)
   implementation(kotlin("stdlib-jdk8"))
-  implementation(project(":preference-store"))
+  implementation(project(":pref-store"))
   implementation(Libs.AndroidX.APPCOMPAT)
   implementation(Libs.AndroidX.Ktx.CORE)
   implementation(Libs.Datastore.PREFERENCES)

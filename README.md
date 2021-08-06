@@ -1,11 +1,7 @@
-preference-store
+pref-store
 ===========
 Wrapper around DataStore<Preferences> providing a higher level abstraction and additional
 functionality.
-
-# Usage
-Note: This library currently uses Kotlin 1.5 language features and alpha/beta versions of some tools
-and libraries.
 
 ## Creating a PreferenceStore
 A simple example to show the basics - SimplePrefs.kt:
@@ -207,13 +203,13 @@ A preference can be created for any type which can be converted to a supported p
 
 # Using and Contributing
 ## Latest Version
-Ensure you are using the latest [published version][maven-preference-store] or the latest
-[SNAPSHOT][preference-store-snapshot] if you want a bleeding-edge version.
+Ensure you are using the latest [published version][maven-pref-store] or the latest
+[SNAPSHOT][pref-store-snapshot] if you want a bleeding-edge version.
 ## Pull/Change Requests
 Suggestions and Pull Requests welcome. Also, if you have a question, or a proposed change, open an
 issue for discussion.
 
 
-[maven-preference-store]: https://search.maven.org/search?q=g:com.ealva%20AND%20a:preference-store
-[preference-store-snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/ealva/preference-store/
+[maven-pref-store]: https://search.maven.org/search?q=g:com.ealva%20AND%20a:pref-store
+[pref-store-snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/ealva/prefe-store/
 [compose]: https://developer.android.com/jetpack/compose]
