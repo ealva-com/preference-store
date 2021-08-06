@@ -20,7 +20,6 @@ package com.ealva.prefstore.test.shared
 import com.nhaarman.expect.Matcher
 import com.nhaarman.expect.fail
 
-
 public fun <T> expect(actual: Set<T>?): SetMatcher<T> {
   return SetMatcher(actual)
 }

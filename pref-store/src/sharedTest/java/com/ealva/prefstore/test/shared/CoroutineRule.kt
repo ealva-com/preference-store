@@ -26,7 +26,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-
 @ExperimentalCoroutinesApi
 public class CoroutineRule constructor(
   public val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
