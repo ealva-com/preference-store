@@ -22,7 +22,7 @@ object AppVersion {
   const val VERSION_CODE = 1
 }
 
-private const val IS_SNAPSHOT = true
+private const val IS_SNAPSHOT = false
 
 object PrefStoreVersion {
   // All parts of versioning can be up to 2 digits: 0-99
