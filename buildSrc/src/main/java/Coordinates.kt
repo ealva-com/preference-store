@@ -22,12 +22,12 @@ object AppVersion {
   const val VERSION_CODE = 1
 }
 
-private const val IS_SNAPSHOT = false
+private const val IS_SNAPSHOT = true
 
 object PrefStoreVersion {
   // All parts of versioning can be up to 2 digits: 0-99
   private const val MAJOR = 0
-  private const val MINOR = 8
+  private const val MINOR = 9
   private const val PATCH = 0
   private const val BUILD = 0
 
@@ -38,7 +38,7 @@ object PrefStoreVersion {
 object ComposePrefVersion {
   // All parts of versioning can be up to 2 digits: 0-99
   private const val MAJOR = 0
-  private const val MINOR = 8
+  private const val MINOR = 9
   private const val PATCH = 0
   private const val BUILD = 0
 
