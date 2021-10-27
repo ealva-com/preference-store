@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalCoroutinesApi
 @Composable
-public fun <A : Any> ListSetting(item: ListSettingItem<A>) {
+public fun <S : Any, A : Any> ListSetting(item: ListSettingItem<S, A>) {
   val scope = rememberCoroutineScope()
   val showDialog = remember { mutableStateOf(false) }
   val closeDialog = { showDialog.value = false }
@@ -51,7 +51,7 @@ public fun <A : Any> ListSetting(item: ListSettingItem<A>) {
     summary = item.selectedKey,
     singleLineTitle = item.singleLineTitle,
     onClick = { showDialog.value = true },
-    icon = item.icon,
+    iconDrawable = item.iconDrawable,
     enabled = isEnabled
   )
 

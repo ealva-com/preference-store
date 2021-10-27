@@ -31,7 +31,7 @@ public fun CallbackSetting(item: CallbackSettingItem) {
     title = item.title,
     summary = item.summary,
     singleLineTitle = true,
-    icon = item.icon,
+    iconDrawable = item.iconDrawable,
     enabled = isEnabled,
     onClick = item.onClick
   )

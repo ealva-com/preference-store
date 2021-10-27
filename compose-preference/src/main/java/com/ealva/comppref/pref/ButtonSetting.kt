@@ -32,12 +32,15 @@ public fun ButtonSetting(item: ButtonSettingItem) {
   // TODO Button is not vertically centered in list item
   Setting(
     title = item.title,
-    summary = item.summary,
+//    summary = item.summary,
     singleLineTitle = true,
-    icon = item.icon,
-    enabled = isEnabled,
+    iconDrawable = item.iconDrawable,
+//    enabled = isEnabled,
   ) {
-    Button(onClick = item.onClick, enabled = isEnabled) {
+    Button(
+      onClick = item.onClick,
+      enabled = isEnabled
+    ) {
       Text(text = item.buttonText)
     }
   }

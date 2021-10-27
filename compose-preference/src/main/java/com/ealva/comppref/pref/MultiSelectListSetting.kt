@@ -55,7 +55,7 @@ public fun <A : Any> MultiSelectListSetting(item: MultiSelectListSettingItem<A>)
     summary = summary,
     singleLineTitle = item.singleLineTitle,
     onClick = { if (isEnabled) showDialog.value = true },
-    icon = item.icon,
+    iconDrawable = item.iconDrawable,
     enabled = isEnabled
   )
 

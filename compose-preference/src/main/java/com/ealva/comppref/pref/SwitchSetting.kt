@@ -27,19 +27,22 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalCoroutinesApi
 @Composable
-public fun SwitchSetting(item: SwitchSettingItem) {
+public fun SwitchSetting(
+  item: SwitchSettingItem,
+  makeSwitch: @Composable (Boolean, ((Boolean) -> Unit)?, Boolean) -> Unit
+) {
   val scope = rememberCoroutineScope()
   val onClicked: (Boolean) -> Unit = { scope.launch { item.preference.set(it) } }
   val isEnabled = LocalGroupEnabledStatus.current && item.enabled
 
   Setting(
     title = item.title,
-    summary = item.summary,
+    summary = if (!item.value && item.offSummary != null) item.offSummary else item.summary,
     singleLineTitle = item.singleLineTitle,
-    icon = item.icon,
+    iconDrawable = item.iconDrawable,
     enabled = isEnabled,
     onClick = { onClicked(!item.value) }
   ) {
-    Switch(checked = item.value, onCheckedChange = { onClicked(it) }, enabled = isEnabled)
+    makeSwitch(item.value, onClicked, isEnabled)
   }
 }

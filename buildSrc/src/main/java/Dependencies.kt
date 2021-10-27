@@ -35,10 +35,10 @@ object Libs {
   const val DESUGAR = "com.android.tools:desugar_jdk_libs:1.1.5"
 
   object Kotlin {
-    private const val VERSION = "1.5.31"
+    const val VERSION = "1.5.31"
     const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$VERSION"
 
-    // const val STDLIB = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$VERSION"
+    const val STDLIB = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$VERSION"
     // const val EXTENSIONS = "org.jetbrains.kotlin:kotlin-android-extensions:$VERSION"
   }
 
@@ -73,7 +73,7 @@ object Libs {
     }
 
     object Constraint {
-      const val LAYOUT_COMPOSE = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha07"
+      const val LAYOUT_COMPOSE = "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
     }
 
     object Compose {

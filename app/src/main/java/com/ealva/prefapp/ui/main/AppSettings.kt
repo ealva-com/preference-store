@@ -25,7 +25,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
@@ -172,7 +171,7 @@ private fun makeDuckVolumeSetting(
   title = resources.getString(R.string.DuckVolume),
   singleLineTitle = true,
   enabled = duckAction() == DuckAction.Duck,
-  icon = Icons.Outlined.Face,
+  iconDrawable = R.drawable.ic_duck,
   summary = resources.getString(R.string.DuckVolumeSummary),
   steps = AppPrefs.DUCK_VOLUME_RANGE.endInclusive.value - 2,
   valueRepresentation = floatToIntString,

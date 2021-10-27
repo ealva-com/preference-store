@@ -17,6 +17,8 @@
 
 package com.ealva.comppref.pref
 
+import android.annotation.SuppressLint
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,17 +32,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
+@SuppressLint("ResourceType")
 @ExperimentalMaterialApi
 @Composable
 public fun Setting(
   title: String,
   summary: String,
   singleLineTitle: Boolean,
-  icon: ImageVector? = null,
+  @DrawableRes iconDrawable: Int = 0,
   enabled: Boolean = true,
   onClick: () -> Unit = {},
   trailing: @Composable (() -> Unit)? = null
@@ -60,15 +62,17 @@ public fun Setting(
           modifier = if (enabled) Modifier else Modifier.alpha(ContentAlpha.disabled)
         )
       },
-      icon = icon?.let {
+      icon = if (iconDrawable > 0) {
         {
           Icon(
-            imageVector = it, null, modifier = Modifier
+            painter = painterResource(id = iconDrawable),
+            contentDescription = null,
+            modifier = Modifier
               .padding(8.dp)
               .size(24.dp)
           )
         }
-      },
+      } else null,
       modifier = Modifier.clickable(onClick = { if (enabled) onClick() }),
       trailing = trailing,
     )
@@ -85,13 +89,14 @@ public fun EnabledWrapper(enabled: Boolean = true, content: @Composable () -> Un
 }
 
 
+@SuppressLint("ResourceType")
 @ExperimentalMaterialApi
 @Composable
 public fun Setting(
   title: String,
   summary: @Composable (() -> Unit)? = null,
   singleLineTitle: Boolean,
-  icon: ImageVector? = null,
+  @DrawableRes iconDrawable: Int = 0,
   enabled: Boolean = true,
   onClick: () -> Unit = {},
   trailing: @Composable (() -> Unit)? = null
@@ -106,15 +111,17 @@ public fun Setting(
         )
       },
       secondaryText = summary,
-      icon = icon?.let {
+      icon = if (iconDrawable > 0) {
         {
           Icon(
-            imageVector = it, null, modifier = Modifier
+            painter = painterResource(id = iconDrawable),
+            contentDescription = null,
+            modifier = Modifier
               .padding(8.dp)
               .size(24.dp)
           )
         }
-      },
+      } else null,
       modifier = Modifier.clickable(onClick = { if (enabled) onClick() }),
       trailing = trailing,
     )

@@ -95,7 +95,7 @@ android {
 
 dependencies {
   coreLibraryDesugaring(Libs.DESUGAR)
-  implementation(kotlin("stdlib-jdk8"))
+  implementation(Libs.Kotlin.STDLIB)
   implementation(project(":pref-store"))
   implementation(Libs.AndroidX.APPCOMPAT)
   implementation(Libs.AndroidX.Ktx.CORE)

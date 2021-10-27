@@ -17,7 +17,7 @@
 
 package com.ealva.comppref.pref
 
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.annotation.DrawableRes
 import com.ealva.prefstore.store.StorePref
 
 public interface SettingItem {
@@ -28,7 +28,7 @@ public interface SettingItem {
 public interface PreferenceSettingItem<S, A> : SettingItem {
   public val preference: StorePref<S, A>
   public val singleLineTitle: Boolean
-  public val icon: ImageVector?
+  public val iconDrawable: Int
 }
 
 public interface BooleanSettingItem : PreferenceSettingItem<Boolean, Boolean> {
@@ -39,9 +39,12 @@ public interface BooleanSettingItem : PreferenceSettingItem<Boolean, Boolean> {
 public data class SwitchSettingItem(
   override val preference: StorePref<Boolean, Boolean>,
   override val title: String,
+  /** Summary displayed if switch is on or always if [offSummary] is null */
   override val summary: String,
+  /** Summary to display if switch is off. If null, [summary] is displayed */
+  public val offSummary: String? = null,
   override val singleLineTitle: Boolean = true,
-  override val icon: ImageVector? = null,
+  @DrawableRes override val iconDrawable: Int = 0,
   override val enabled: Boolean = true,
   override val value: Boolean = preference()
 ) : BooleanSettingItem
@@ -51,20 +54,20 @@ public data class CheckboxSettingItem(
   override val title: String,
   override val summary: String,
   override val singleLineTitle: Boolean = true,
-  override val icon: ImageVector? = null,
+  @DrawableRes override val iconDrawable: Int = 0,
   override val enabled: Boolean = true,
   override val value: Boolean = preference()
 ) : BooleanSettingItem
 
-public data class ListSettingItem<A : Any>(
-  override val preference: StorePref<String, A>,
+public data class ListSettingItem<S : Any, A : Any>(
+  override val preference: StorePref<S, A>,
   override val title: String,
   override val singleLineTitle: Boolean = true,
-  override val icon: ImageVector? = null,
+  @DrawableRes override val iconDrawable: Int = 0,
   override val enabled: Boolean = true,
   public val dialogItems: Map<String, A>,
   public val selectedKey: String = dialogItems.getKey(preference())
-) : PreferenceSettingItem<String, A>
+) : PreferenceSettingItem<S, A>
 
 private fun <K, V> Map<K, V>.getKey(target: V): K = keys.first { target == get(it) }
 
@@ -72,7 +75,7 @@ public data class MultiSelectListSettingItem<A : Any>(
   override val preference: StorePref<Set<String>, Set<A>>,
   override val title: String,
   override val singleLineTitle: Boolean = true,
-  override val icon: ImageVector? = null,
+  @DrawableRes override val iconDrawable: Int = 0,
   override val enabled: Boolean = true,
   public val dialogItems: Map<String, A>,
   public val selectedKeys: Set<String> =
@@ -84,7 +87,7 @@ public data class SliderSettingItem<S, A : Comparable<A>>(
   override val title: String,
   public val value: A = preference(),
   override val singleLineTitle: Boolean = true,
-  override val icon: ImageVector? = null,
+  @DrawableRes override val iconDrawable: Int = 0,
   override val enabled: Boolean = true,
   public val summary: String,
   public val steps: Int,
@@ -97,22 +100,22 @@ public data class SliderSettingItem<S, A : Comparable<A>>(
 public data class GroupSettingItem(
   override val title: String,
   override val enabled: Boolean = true,
-  val content: List<SettingItem>
+  public val content: List<SettingItem>
 ) : SettingItem
 
 public data class CallbackSettingItem(
   override val title: String,
-  val summary: String,
-  public val icon: ImageVector? = null,
+  public val summary: String,
+  @DrawableRes public val iconDrawable: Int = 0,
   override val enabled: Boolean = true,
   public val onClick: () -> Unit
 ) : SettingItem
 
 public data class ButtonSettingItem(
   override val title: String,
-  val summary: String,
-  val buttonText: String,
-  public val icon: ImageVector? = null,
+  public val summary: String,
+  public val buttonText: String,
+  @DrawableRes public val iconDrawable: Int = 0,
   override val enabled: Boolean = true,
   public val onClick: () -> Unit
 ) : SettingItem

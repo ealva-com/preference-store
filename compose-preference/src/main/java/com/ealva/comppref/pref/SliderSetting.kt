@@ -17,6 +17,8 @@
 
 package com.ealva.comppref.pref
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Slider
@@ -54,11 +56,15 @@ public fun <S, A : Comparable<A>> SliderSetting(item: SliderSettingItem<S, A>) {
         onValueChanged = { currentValue.value = it },
         onValueChangeEnd = {
           scope.launch { item.preference(item.floatToType(currentValue.value)) }
-        }
+        },
+        sliderModifier = Modifier.padding(
+          start = if (item.iconDrawable > 0) 0.dp else 12.dp,
+          end = 12.dp
+        )
       )
     },
     singleLineTitle = item.singleLineTitle,
-    icon = item.icon,
+    iconDrawable = item.iconDrawable,
     enabled = isEnabled
   )
 }
@@ -66,6 +72,7 @@ public fun <S, A : Comparable<A>> SliderSetting(item: SliderSettingItem<S, A>) {
 private const val MARGIN_AMOUNT: Int = -8
 private val NEGATIVE_MARGIN_ADJUSTMENT_UP: Dp = MARGIN_AMOUNT.dp
 
+@SuppressLint("ModifierParameter")
 @Composable
 private fun SliderSettingSummary(
   item: SliderSettingItem<*, *>,
@@ -74,6 +81,7 @@ private fun SliderSettingSummary(
   valueRange: ClosedFloatingPointRange<Float>,
   onValueChanged: (Float) -> Unit,
   onValueChangeEnd: () -> Unit,
+  sliderModifier: Modifier
 ) {
   ConstraintLayout {
     val (summary, value, slider) = createRefs()
@@ -99,11 +107,12 @@ private fun SliderSettingSummary(
       valueRange = valueRange,
       steps = item.steps,
       onValueChangeFinished = onValueChangeEnd,
-      modifier = Modifier.constrainAs(slider) {
-        top.linkTo(summary.bottom, NEGATIVE_MARGIN_ADJUSTMENT_UP)
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-      },
+      modifier = sliderModifier
+        .constrainAs(slider) {
+          top.linkTo(summary.bottom, NEGATIVE_MARGIN_ADJUSTMENT_UP)
+          start.linkTo(parent.start)
+          end.linkTo(parent.end)
+        },
       enabled = isEnabled
     )
   }

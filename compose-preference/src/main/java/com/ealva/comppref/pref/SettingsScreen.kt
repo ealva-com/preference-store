@@ -19,8 +19,14 @@ package com.ealva.comppref.pref
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -28,9 +34,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 public fun SettingsScreen(
   items: List<SettingItem>,
+  modifier: Modifier = Modifier,
   makers: SettingMakers = SettingMakers.DEFAULT
 ) {
-  LazyColumn {
+  LazyColumn(modifier = modifier) {
     items(items = items) { item ->
       makers.Make(item = item)
     }
@@ -48,15 +55,14 @@ public interface SettingMakers {
   }
 }
 
-@ExperimentalMaterialApi
-private class DefaultSettingMakers : SettingMakers {
-  @OptIn(ExperimentalCoroutinesApi::class)
+public open class DefaultSettingMakers : SettingMakers {
+  @OptIn(ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
   @Composable
   override fun Make(item: SettingItem) {
     when (item) {
       is SwitchSettingItem -> SwitchSetting(item)
       is CheckboxSettingItem -> CheckboxSetting(item)
-      is ListSettingItem<*> -> ListSetting(item)
+      is ListSettingItem<*, *> -> ListSetting(item)
       is SliderSettingItem<*, *> -> SliderSetting(item)
       is GroupSettingItem -> GroupSetting(item, this)
       is CallbackSettingItem -> CallbackSetting(item)
@@ -64,5 +70,45 @@ private class DefaultSettingMakers : SettingMakers {
       is MultiSelectListSettingItem<*> -> MultiSelectListSetting(item)
       else -> println("No handler for $item")
     }
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Composable
+  private fun CheckboxSetting(item: CheckboxSettingItem) {
+    CheckboxSetting(item) { checked, clicked, enabled -> Checkbox(checked, clicked, enabled) }
+  }
+
+  @Composable
+  protected open fun Checkbox(
+    isChecked: Boolean,
+    onClicked: ((Boolean) -> Unit)?,
+    isEnabled: Boolean
+  ) {
+    Checkbox(
+      checked = isChecked,
+      onCheckedChange = onClicked,
+      enabled = isEnabled,
+      colors = CheckboxDefaults.colors()
+    )
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Composable
+  protected open fun SwitchSetting(item: SwitchSettingItem) {
+    SwitchSetting(item) { checked, clicked, enabled -> Switch(checked, clicked, enabled) }
+  }
+
+  @Composable
+  protected open fun Switch(
+    isChecked: Boolean,
+    onClicked: ((Boolean) -> Unit)?,
+    isEnabled: Boolean
+  ) {
+    Switch(
+      checked = isChecked,
+      onCheckedChange = onClicked,
+      enabled = isEnabled,
+      colors = SwitchDefaults.colors(uncheckedThumbColor = Color.White)
+    )
   }
 }

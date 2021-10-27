@@ -17,18 +17,20 @@
 
 package com.ealva.comppref.pref
 
-import com.ealva.prefstore.store.invoke
-import androidx.compose.material.Checkbox
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import com.ealva.prefstore.store.invoke
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalCoroutinesApi
 @Composable
-public fun CheckboxSetting(item: CheckboxSettingItem) {
+public fun CheckboxSetting(
+  item: CheckboxSettingItem,
+  makeCheckbox: @Composable (Boolean, ((Boolean) -> Unit)?, Boolean) -> Unit
+) {
   val scope = rememberCoroutineScope()
   val isEnabled = LocalGroupEnabledStatus.current && item.enabled
   val onClicked: (Boolean) -> Unit = { scope.launch { item.preference(it) } }
@@ -37,10 +39,10 @@ public fun CheckboxSetting(item: CheckboxSettingItem) {
     title = item.title,
     summary = item.summary,
     singleLineTitle = item.singleLineTitle,
-    icon = item.icon,
+    iconDrawable = item.iconDrawable,
     enabled = isEnabled,
     onClick = { onClicked(!item.value) }
   ) {
-    Checkbox(checked = item.value, onCheckedChange = { onClicked(it) }, enabled = isEnabled)
+    makeCheckbox(item.value, onClicked, isEnabled)
   }
 }
