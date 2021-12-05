@@ -16,16 +16,16 @@
  */
 
 object SdkVersion {
-  const val COMPILE = 30
+  const val COMPILE = 31
   const val MIN = 21
   const val TARGET = 30
 }
 
 object PluginsVersion {
   const val AGP = "7.0.3"
-  const val DETEKT = "1.18.1"
-  const val DOKKA = "1.5.31"
-  const val KOTLIN = "1.5.31"
+  const val DETEKT = "1.19.0"
+  const val DOKKA = "1.6.0"
+  const val KOTLIN = "1.6.0"
   const val PUBLISH = "0.18.0"
   const val VERSIONS = "0.39.0"
 }
@@ -35,7 +35,7 @@ object Libs {
   const val DESUGAR = "com.android.tools:desugar_jdk_libs:1.1.5"
 
   object Kotlin {
-    const val VERSION = "1.5.31"
+    const val VERSION = "1.6.0"
     const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$VERSION"
 
     const val STDLIB = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$VERSION"
@@ -50,7 +50,7 @@ object Libs {
   }
 
   object Koin {
-    private const val VERSION = "3.1.2"
+    private const val VERSION = "3.1.4"
     const val CORE = "io.insert-koin:koin-core:$VERSION"
     const val ANDROID = "io.insert-koin:koin-android:$VERSION"
   }
@@ -61,15 +61,15 @@ object Libs {
   }
 
   object AndroidX {
-    const val APPCOMPAT = "androidx.appcompat:appcompat:1.3.1"
+    const val APPCOMPAT = "androidx.appcompat:appcompat:1.4.0"
     const val PALETTE = "androidx.palette:palette:1.0.0"
 
     object Ktx {
-      const val CORE = "androidx.core:core-ktx:1.6.0"
+      const val CORE = "androidx.core:core-ktx:1.7.0"
     }
 
     object Activity {
-      const val ACTIVITY_COMPOSE = "androidx.activity:activity-compose:1.3.1"
+      const val ACTIVITY_COMPOSE = "androidx.activity:activity-compose:1.4.0"
     }
 
     object Constraint {
@@ -78,7 +78,7 @@ object Libs {
 
     object Compose {
       @Suppress("MemberVisibilityCanBePrivate") // used in app build.gradle.kts
-      const val VERSION = "1.0.4"
+      const val VERSION = "1.1.0-beta04"
       const val FOUNDATION = "androidx.compose.foundation:foundation:$VERSION"
       const val UI = "androidx.compose.ui:ui:$VERSION"
       const val MATERIAL = "androidx.compose.material:material:$VERSION"
@@ -91,8 +91,8 @@ object Libs {
     }
 
     object Lifecycle {
-      private const val VERSION = "2.3.1"
-      const val RUNTIME_KTX = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01"
+      private const val VERSION = "2.4.0"
+      const val RUNTIME_KTX = "androidx.lifecycle:lifecycle-runtime-ktx:$VERSION"
 
 //    const val VIEW_MODEL_COMPOSE = "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha05"
 //    const val VIEW_MODEL_KTX = "androidx.lifecycle:lifecycle-viewmodel-ktx:$VERSION"

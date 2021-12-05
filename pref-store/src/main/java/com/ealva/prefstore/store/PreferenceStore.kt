@@ -106,7 +106,8 @@ public interface PreferenceStore<T : PreferenceStore<T>> {
 
     /**
      * A [Flow] of values from this preference. As values are committed they will be emitted from
-     * this flow
+     * this flow. Only distinct values are emitted:
+     * [distinctUntilChanged](kotlinx.coroutines.flow.distinctUntilChanged)
      */
     public fun asFlow(): Flow<A>
   }

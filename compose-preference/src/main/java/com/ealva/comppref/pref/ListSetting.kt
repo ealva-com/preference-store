@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -68,16 +69,16 @@ public fun <S : Any, A : Any> ListSetting(item: ListSettingItem<S, A>) {
               closeDialog()
             }
             Row(
-              Modifier
+              modifier = Modifier
                 .fillMaxWidth()
-                .selectable(selected = isSelected, onClick = { if (!isSelected) onSelected() })
-                .padding(16.dp)
+                .selectable(selected = isSelected, onClick = { if (!isSelected) onSelected() }),
+              verticalAlignment = Alignment.CenterVertically
             ) {
               RadioButton(selected = isSelected, onClick = { if (!isSelected) onSelected() })
               Text(
                 text = current.key,
                 style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier.padding(start = 4.dp)
               )
             }
           }

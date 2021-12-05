@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -81,13 +82,13 @@ public fun <A : Any> MultiSelectListSetting(item: MultiSelectListSettingItem<A>)
               }
             }
             Row(
-              Modifier
+              modifier = Modifier
                 .fillMaxWidth()
                 .selectable(
                   selected = isSelected,
                   onClick = { onSelectionChanged() }
-                )
-                .padding(16.dp)
+                ),
+              verticalAlignment = Alignment.CenterVertically
             ) {
               Checkbox(
                 checked = isSelected,
@@ -96,7 +97,7 @@ public fun <A : Any> MultiSelectListSetting(item: MultiSelectListSettingItem<A>)
               Text(
                 text = current.key,
                 style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier.padding(start = 4.dp)
               )
             }
           }

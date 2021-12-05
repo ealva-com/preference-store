@@ -21,6 +21,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import kotlin.reflect.KClass
@@ -75,6 +76,7 @@ public abstract class BasePreference<S, A, T : PreferenceStore<T>>(
     .catch { ex -> if (ex is IOException) emit(emptyPreferences()) else throw ex }
     .map { preferences -> preferences[key] }
     .map { stored -> storedToActual(stored) }
+    .distinctUntilChanged()
 
   override fun getValue(
     thisRef: PreferenceStore<*>,
