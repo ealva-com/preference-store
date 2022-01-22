@@ -22,46 +22,20 @@ object SdkVersion {
 }
 
 object PluginsVersion {
-  const val AGP = "7.0.3"
+  const val AGP = "7.0.4"
   const val DETEKT = "1.19.0"
-  const val DOKKA = "1.6.0"
-  const val KOTLIN = "1.6.0"
+  const val DOKKA = "1.6.10"
+  const val KOTLIN = "1.6.10"
   const val PUBLISH = "0.18.0"
-  const val VERSIONS = "0.39.0"
+  const val VERSIONS = "0.41.0"
 }
 
 object Libs {
   const val AGP = "com.android.tools.build:gradle:${PluginsVersion.AGP}"
   const val DESUGAR = "com.android.tools:desugar_jdk_libs:1.1.5"
 
-  object Kotlin {
-    const val VERSION = "1.6.0"
-    const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$VERSION"
-
-    const val STDLIB = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$VERSION"
-    // const val EXTENSIONS = "org.jetbrains.kotlin:kotlin-android-extensions:$VERSION"
-  }
-
-  object Coroutines {
-    private const val VERSION = "1.5.2"
-    const val CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$VERSION"
-    const val ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$VERSION"
-    const val TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$VERSION"
-  }
-
-  object Koin {
-    private const val VERSION = "3.1.4"
-    const val CORE = "io.insert-koin:koin-core:$VERSION"
-    const val ANDROID = "io.insert-koin:koin-android:$VERSION"
-  }
-
-  object JUnit {
-    private const val VERSION = "4.13.2"
-    const val JUNIT = "junit:junit:$VERSION"
-  }
-
   object AndroidX {
-    const val APPCOMPAT = "androidx.appcompat:appcompat:1.4.0"
+    const val APPCOMPAT = "androidx.appcompat:appcompat:1.4.1"
     const val PALETTE = "androidx.palette:palette:1.0.0"
 
     object Ktx {
@@ -73,12 +47,13 @@ object Libs {
     }
 
     object Constraint {
-      const val LAYOUT_COMPOSE = "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
+      const val LAYOUT_COMPOSE = "androidx.constraintlayout:constraintlayout-compose:1.0.0"
     }
 
     object Compose {
       @Suppress("MemberVisibilityCanBePrivate") // used in app build.gradle.kts
-      const val VERSION = "1.1.0-beta04"
+      const val COMPILER_VERSION = "1.1.0-rc02"
+      private const val VERSION = "1.1.0-rc01"
       const val FOUNDATION = "androidx.compose.foundation:foundation:$VERSION"
       const val UI = "androidx.compose.ui:ui:$VERSION"
       const val MATERIAL = "androidx.compose.material:material:$VERSION"
@@ -111,6 +86,32 @@ object Libs {
 
       // const val ESPRESSO_CORE = "androidx.test.espresso:espresso-core:3.2.0"
     }
+  }
+
+  object Kotlin {
+    const val VERSION = "1.6.10"
+    const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$VERSION"
+
+    const val STDLIB = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$VERSION"
+    // const val EXTENSIONS = "org.jetbrains.kotlin:kotlin-android-extensions:$VERSION"
+  }
+
+  object Coroutines {
+    private const val VERSION = "1.6.0"
+    const val CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$VERSION"
+    const val ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$VERSION"
+    const val TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$VERSION"
+  }
+
+  object Koin {
+    private const val VERSION = "3.1.5"
+    const val CORE = "io.insert-koin:koin-core:$VERSION"
+    const val ANDROID = "io.insert-koin:koin-android:$VERSION"
+  }
+
+  object JUnit {
+    private const val VERSION = "4.13.2"
+    const val JUNIT = "junit:junit:$VERSION"
   }
 
   object Datastore {

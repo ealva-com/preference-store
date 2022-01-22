@@ -18,6 +18,10 @@
 package com.ealva.comppref.pref
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
@@ -27,12 +31,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import com.ealva.prefstore.store.invoke
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -57,10 +60,9 @@ public fun <S, A : Comparable<A>> SliderSetting(item: SliderSettingItem<S, A>) {
         onValueChangeEnd = {
           scope.launch { item.preference(item.floatToType(currentValue.value)) }
         },
-        sliderModifier = Modifier.padding(
-          start = if (item.iconDrawable > 0) 0.dp else 12.dp,
-          end = 12.dp
-        )
+        sliderModifier = Modifier
+          .fillMaxWidth()
+          .padding(start = if (item.iconDrawable > 0) 0.dp else 12.dp, end = 12.dp)
       )
     },
     singleLineTitle = item.singleLineTitle,
@@ -68,9 +70,6 @@ public fun <S, A : Comparable<A>> SliderSetting(item: SliderSettingItem<S, A>) {
     enabled = isEnabled
   )
 }
-
-private const val MARGIN_AMOUNT: Int = -8
-private val NEGATIVE_MARGIN_ADJUSTMENT_UP: Dp = MARGIN_AMOUNT.dp
 
 @SuppressLint("ModifierParameter")
 @Composable
@@ -83,36 +82,33 @@ private fun SliderSettingSummary(
   onValueChangeEnd: () -> Unit,
   sliderModifier: Modifier
 ) {
-  ConstraintLayout {
-    val (summary, value, slider) = createRefs()
-    val textModifier = if (isEnabled) Modifier else Modifier.alpha(ContentAlpha.disabled)
-    Text(
-      text = item.summary,
-      modifier = textModifier.constrainAs(summary) {
-        top.linkTo(parent.top)
-        start.linkTo(parent.start)
-      }
-    )
-    Text(
-      text = item.valueRepresentation(sliderValue),
-      textAlign = TextAlign.End,
-      modifier = textModifier.constrainAs(value) {
-        top.linkTo(parent.top)
-        end.linkTo(parent.end, 8.dp)
-      }
-    )
+  val textModifier = if (isEnabled) Modifier else Modifier.alpha(ContentAlpha.disabled)
+  Column(
+    modifier = Modifier.fillMaxWidth()
+  ) {
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceAround,
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      Text(
+        text = item.summary,
+        textAlign = TextAlign.Start,
+        modifier = textModifier.weight(1F)
+      )
+      Text(
+        text = item.valueRepresentation(sliderValue),
+        textAlign = TextAlign.End,
+        modifier = textModifier.padding(start = 12.dp)
+      )
+    }
     Slider(
       value = sliderValue,
       onValueChange = { if (isEnabled) onValueChanged(it) },
       valueRange = valueRange,
       steps = item.steps,
       onValueChangeFinished = onValueChangeEnd,
-      modifier = sliderModifier
-        .constrainAs(slider) {
-          top.linkTo(summary.bottom, NEGATIVE_MARGIN_ADJUSTMENT_UP)
-          start.linkTo(parent.start)
-          end.linkTo(parent.end)
-        },
+      modifier = sliderModifier,
       enabled = isEnabled
     )
   }

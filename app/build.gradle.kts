@@ -52,7 +52,7 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.VERSION
+    kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.COMPILER_VERSION
   }
 
   compileOptions {
@@ -115,7 +115,7 @@ dependencies {
   implementation(Libs.Navigation.COMPOSE)
 
   implementation(Libs.AndroidX.Activity.ACTIVITY_COMPOSE)
-  implementation("com.google.android.material:material:1.4.0")
+  implementation("com.google.android.material:material:1.5.0")
 
   testImplementation(Libs.JUnit.JUNIT)
   testImplementation(Libs.AndroidX.Test.CORE) {

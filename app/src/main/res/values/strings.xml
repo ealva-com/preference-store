@@ -24,8 +24,8 @@
   <string name="DuckAction">Duck Action</string>
   <string name="EnableGroup">Enable Group</string>
   <string name="AutoDownload">Auto Download</string>
-  <string name="CrossFadeLengthSummary">Volume fade between songs</string>
-  <string name="DuckVolumeSummary">Set volume to this when ducking</string>
+  <string name="CrossFadeLengthSummary">Volume fade between songs in milliseconds and longer string to ensure wrapping and padding</string>
+  <string name="DuckVolumeSummary">The volume to be used when the volume needs to be lowered temporarily</string>
   <string name="AutomaticallyDownload">Automatically download artwork</string>
   <string name="UseRemote">Use remote artwork</string>
   <string name="EnableGroupSummary">Enable group of settings</string>

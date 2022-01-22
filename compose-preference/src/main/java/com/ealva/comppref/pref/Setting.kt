@@ -20,6 +20,7 @@ package com.ealva.comppref.pref
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ContentAlpha
@@ -122,7 +123,9 @@ public fun Setting(
           )
         }
       } else null,
-      modifier = Modifier.clickable(onClick = { if (enabled) onClick() }),
+      modifier = Modifier
+        .fillMaxWidth()
+        .clickable(onClick = { if (enabled) onClick() }),
       trailing = trailing,
     )
   }

@@ -29,7 +29,6 @@ plugins {
 
 allprojects {
   repositories {
-    jcenter()
     google()
     mavenCentral()
     maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
@@ -39,16 +38,6 @@ allprojects {
 subprojects {
   apply {
     plugin("io.gitlab.arturbosch.detekt")
-  }
-
-  detekt {
-    config = rootProject.files("config/detekt/detekt.yml")
-    reports {
-      html {
-        enabled = true
-        destination = file("build/reports/detekt.html")
-      }
-    }
   }
 }
 

@@ -23,7 +23,7 @@ plugins {
 }
 
 repositories {
-  jcenter()
+  mavenCentral()
 }
 
 val compileKotlin: KotlinCompile by tasks

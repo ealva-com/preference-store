@@ -53,7 +53,7 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.VERSION
+    kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.COMPILER_VERSION
   }
 
   compileOptions {
